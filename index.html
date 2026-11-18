@@ -152,7 +152,7 @@ const panel=document.getElementById('expPanel'),badge=document.getElementById('c
 const safeRead=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}};
 const safeSave=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value));return true}catch{return false}};
 const state={gender:safeRead('anit_gender_v3','girl'),people:safeRead('anit_people_v3',42),soldiers:safeRead('anit_soldiers_v3',12),event:'none',weather:safeRead('anit_weather_v3','auto'),weatherAmount:safeRead('anit_weather_amt_v3',60),wreath:false};
-const titles={none:'Normal ziyaret',nov10:'10 Kasım – Atatürk’ü Anma',oct29:'29 Ekim – Cumhuriyet Bayramı',apr23:'23 Nisan – Ulusal Egemenlik ve Çocuk Bayramı',aug30:'30 Ağustos – Zafer Bayramı',may19:'19 Mayıs – Atatürk’ü Anma, Gençlik ve Spor Bayramı'};
+const titles={none:'🧭 Serbest gezi (törensiz)',nov10:'10 Kasım – Atatürk’ü Anma',oct29:'29 Ekim – Cumhuriyet Bayramı',apr23:'23 Nisan – Ulusal Egemenlik ve Çocuk Bayramı',aug30:'30 Ağustos – Zafer Bayramı',may19:'19 Mayıs – Atatürk’ü Anma, Gençlik ve Spor Bayramı'};
 const eventDay={nov10:'10 Kasım',oct29:'29 Ekim',apr23:'23 Nisan',aug30:'30 Ağustos',may19:'19 Mayıs'};
 const eventDetails={none:'Normal ziyaret düzeni. Serbest gezinti ve rehber anlatımı.',nov10:'10 Kasım canlandırması: devlet erkânı mozoleye çelenk bırakır, 09.05’te saygı duruşu yapılır, İstiklal Marşı okunur ve ardından Misak-ı Millî Kulesi’nde özel defter imzalanır.',oct29:'29 Ekim canlandırması: resmî heyet mozoleye çelenk bırakır, İstiklal Marşı okunur, özel defter imzalanır; meydanda yoğun bayraklı kalabalık ve kutlama atmosferi görülür.',apr23:'23 Nisan canlandırması: çocukların ve ailelerin yoğun olduğu kutlama kalabalığı, Türk bayrakları ve tören heyetiyle anma alanı canlandırılır.',aug30:'30 Ağustos canlandırması: askerî vurgu daha güçlüdür; resmî heyet, çelenk, saygı duruşu ve bayraklı kalabalık öne çıkar.',may19:'19 Mayıs canlandırması: gençlik temalı kalabalık, bayraklar ve resmî ziyaret akışıyla tören canlandırılır.'};
 let current=''; const call3=(method,...args)=>{const f=window.__anit3d?.[method];if(f)f(...args);else message('3B sahne yüklenince etkinleşecek; 2B harita kullanılabilir.')};
@@ -451,7 +451,7 @@ for(let s of [-1,1])for(let z=15;z<126;z+=24){cylinder(.15,.19,4.7,metal,s*20,2.
 const clouds=[];let cloudMat=new T.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.22,depthWrite:false});for(let i=0;i<22;i++){let g=new T.Group();g.position.set(-180+i*19,70+rand(i+71)*33,-190-rand(i+94)*170);for(let j=0;j<4;j++){let v=mesh(new T.SphereGeometry(9+rand(i+j)*10,10,8),cloudMat,j*8,rand(j+i)*2,rand(i+j+55)*6,g,false);v.scale.y=.22}scene.add(g);clouds.push(g)}
 // Gradient sky dome follows the camera and takes its colors from the lighting preset.
 const skyU={top:{value:new T.Color(0x6fa8d6)},bot:{value:new T.Color(0xd6d9ca)}};window.__skyU=skyU;
-const skyDome=new T.Mesh(new T.SphereGeometry(600,32,16),new T.ShaderMaterial({uniforms:skyU,side:T.BackSide,depthWrite:false,fog:false,vertexShader:'varying vec3 vD;void main(){vD=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',fragmentShader:'uniform vec3 top;uniform vec3 bot;varying vec3 vD;void main(){float h=clamp(normalize(vD).y*1.5+.06,0.,1.);vec3 c=mix(bot,top*.82,pow(h,.55));gl_FragColor=vec4(c,1.);#include <tonemapping_fragment>\n#include <colorspace_fragment>\n}'}));
+const skyDome=new T.Mesh(new T.SphereGeometry(600,32,16),new T.ShaderMaterial({uniforms:skyU,side:T.BackSide,depthWrite:false,fog:false,vertexShader:'varying vec3 vD;void main(){vD=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',fragmentShader:'uniform vec3 top;uniform vec3 bot;varying vec3 vD;void main(){float h=clamp(normalize(vD).y*1.5+.06,0.,1.);vec3 c=mix(bot,top*.82,pow(h,.55));gl_FragColor=vec4(c,1.);\n#include <tonemapping_fragment>\n#include <colorspace_fragment>\n}'}));
 skyDome.frustumCulled=false;skyDome.renderOrder=-10;skyDome.onBeforeRender=()=>skyDome.position.copy(camera.position);scene.add(skyDome);
 // Third-person walking student character, more proportioned silhouette.
 player=new T.Group();scene.add(player);player.scale.setScalar(.72);
@@ -497,10 +497,17 @@ const FU={value:0};window.__FU=FU;const flagCloth=new T.MeshStandardMaterial({ma
 flagCloth.onBeforeCompile=sh=>{sh.uniforms.uTime=FU;sh.vertexShader='uniform float uTime;\n'+sh.vertexShader.replace('#include <begin_vertex>','vec3 transformed=vec3(position);float w=position.x/.95;transformed.z+=sin(uTime*6.+position.x*9.+modelMatrix[3].x*.7+modelMatrix[3].z*.5)*.085*w;transformed.y+=sin(uTime*4.+position.x*5.)*.02*w;')};
 function bendJoints(a){if(!a||!a.legsH)return;for(const l of a.legsH)l.userData.k&&(l.userData.k.rotation.x=Math.abs(l.rotation.x)*1.1);for(const m of a.armsH)m.userData.k&&(m.userData.k.rotation.x=-(Math.abs(m.rotation.x)*.7+.12))}const SHM=new T.MeshBasicMaterial({color:0x000000,transparent:true,opacity:.28,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-2});
 const MC={};const cm=(c,r=.85,m=0)=>{const k=c+'_'+r+'_'+m;return MC[k]||(MC[k]=new T.MeshStandardMaterial({color:c,roughness:r,metalness:m}))};
+let _ec=null;function eventCloth(i){const ev=features.state.event;if(!ev||ev==='none'||ev==='aug30')return null;if(!_ec)_ec={nov10:[0x14151a,0x1d1f26,0x101114].map(c=>cm(c,.95)),apr23:[0xe63946,0xffd23f,0x2a9d8f,0xff8fab,0x4cc9f0,0x8ac926,0xff9f1c,0x9b5de5].map(c=>cm(c,.8)),may19:[0x1d4ed8,0xe11d48,0xfacc15,0xffffff,0x16a34a].map(c=>cm(c,.8)),oct29:[0xce2830,0xf8f7f2,0xce2830,0x2b3a55].map(c=>cm(c,.85))};const a=_ec[ev];return a?a[i%a.length]:null}
+function balPick(k,i,r,w){if(k!=='apr23'&&k!=='may19')return i%2?r:w;return cm([0xe63946,0xffd23f,0x2a9d8f,0xff8fab,0x4cc9f0,0xf8f7f2][i%6],.5)}
+function ceremonyExtras(key){const add=(n,o)=>{for(let k=0;k<n;k++){const ch=o.child&&k%o.child===0;const a=human(crowdGroup,(rand(k*7+o.s)*2-1)*56,-43+rand(k*3+o.s+1)*62,{index:o.s+k,child:ch,height:ch?1.95:undefined,cloth:o.cl(k),flag:o.flag(k),bigFlag:o.big&&o.big(k),route:'square',dir:rand(k+o.s)>.5?1:-1});a.g.rotation.y=rand(k+o.s)*6.28;a.pace=o.pace;crowdActors.push(a)}};
+ if(key==='apr23')add(70,{s:3000,child:1,cl:k=>eventCloth(k),flag:()=>true,pace:2.6});
+ if(key==='oct29')add(50,{s:3200,child:4,cl:k=>eventCloth(k),flag:()=>true,big:k=>k%4!==0,pace:1.3});
+ if(key==='may19'){add(46,{s:3400,child:5,cl:k=>eventCloth(k),flag:k=>k%3===0,pace:3.4});const w=cm(0xffffff,.6);for(const gx of [-44,44]){block(.25,3,.25,w,gx-4,1.5,-5,ceremonyGroup);block(.25,3,.25,w,gx+4,1.5,-5,ceremonyGroup);block(8.5,.25,.25,w,gx,3,-5,ceremonyGroup)}}
+ window.__ceremonyIntro&&window.__ceremonyIntro(key)}
 function human(parent,x,z,opt={}){
  const g=new T.Group();parent.add(g);g.position.set(x,0,z);
  const uniform=!!opt.guard,ht=opt.height||2.62,sc=ht/2.62;g.scale.setScalar(sc);const ix=opt.index||0;
- const cloth=uniform?cm(0x2b4440,.9):guestClothes[ix%guestClothes.length],face=skinPalette[ix%3],trouser=uniform?cm(0x222f2b,.9):cm(0x30343f,.9);
+ const cloth=uniform?cm(0x2b4440,.9):(opt.cloth||guestClothes[ix%guestClothes.length]),face=skinPalette[ix%3],trouser=uniform?cm(0x222f2b,.9):cm(0x30343f,.9);
  const sdw=new T.Mesh(HG.disc,SHM);sdw.rotation.x=-Math.PI/2;sdw.position.y=.03;g.add(sdw);
  const torso=mesh(HG.torso,cloth,0,1.55,0,g);torso.scale.z=.72;
  mesh(HG.neck,face,0,2.1,0,g,false);mesh(HG.head,face,0,2.34,0,g).scale.set(.95,1.08,1);
@@ -517,7 +524,7 @@ function human(parent,x,z,opt={}){
   mesh(HG.belt,cm(0xf0eee6,.6),0,1.2,0,g,false).scale.z=.75;block(.1,.1,.05,cm(0xd4b272,.4,.6),0,1.2,.27,g,false);
   for(const d of [-1,1])block(.22,.05,.16,cm(0xd4b272,.4,.6),d*.36,2.04,0,g,false);
   if(opt.rifle!==false){const r=mesh(HG.rifle,cm(0x2d2318,.7),.46,1.12,.18,g);block(.06,.3,.06,cm(0x9aa3a8,.3,.8),.46,1.9,.18,g,false);}}
- else{if(opt.flag){const fg=new T.Group();fg.position.set(.44,1.05,.05);g.add(fg);mesh(HG.pole,cm(0xddd8cb),0,1.2,0,fg,false);const cl=new T.Mesh(HG.flagGeo,flagCloth);cl.position.set(.02,2.05,0);fg.add(cl);(window.__flags||(window.__flags=[])).push({fg,p:ix*1.7});} if(opt.child){g.scale.multiplyScalar(.68);}}
+ else{if(opt.flag){const fg=new T.Group();fg.position.set(.44,1.05,.05);g.add(fg);mesh(HG.pole,cm(0xddd8cb),0,1.2,0,fg,false);const cl=new T.Mesh(HG.flagGeo,flagCloth);cl.position.set(.02,2.05,0);fg.add(cl);if(opt.bigFlag)fg.scale.setScalar(2.2);(window.__flags||(window.__flags=[])).push({fg,p:ix*1.7});} if(opt.child){g.scale.multiplyScalar(.68);}}
  return {g,torso,armsH,legsH,ox:x,oz:z,phase:(opt.index||0)*2.13,guard:uniform,child:!!opt.child,pace:opt.child?2.3:1.25,route:opt.route||'wander',group:opt.group||0,row:opt.row||0,col:opt.col||0,dir:opt.dir||1,radius:uniform?1.35:(opt.child?.78:1.05)};
 }
 function repopulate(){crowdGroup.clear();guardGroup.clear();museumActors=[];crowdActors=[];guardActors=[];
@@ -528,7 +535,7 @@ function repopulate(){crowdGroup.clear();guardGroup.clear();museumActors=[];crow
  else if(i%5===2){x=48+rand(i+91)*16;z=-54+rand(i+52)*20;route='museum'}
  else if(i%5===3){x=(rand(i+120)*2-1)*64;z=18+rand(i+45)*18;route='park'}
  else{x=(rand(i+51)*2-1)*57;z=-65+rand(i+61)*18;route='square'}
- let isChild=i%8===0;let a=human(crowdGroup,x,z,{index:i,child:isChild,flag:features.state.event!=='none'&&features.state.event!=='nov10'&&i%3===0,route,dir:rand(i+130)>.5?1:-1});a.g.rotation.y=rand(i+130)*Math.PI*2;a.pace=isChild?2.4:1.25+rand(i+410)*.55;crowdActors.push(a);if(route==='museum')museumActors.push(a)}
+ const ev=features.state.event;let isChild=ev==='apr23'?i%3===0:i%8===0;let a=human(crowdGroup,x,z,{index:i,child:isChild,cloth:eventCloth(i),bigFlag:ev==='oct29'&&i%2===0,flag:ev!=='none'&&ev!=='nov10'&&(ev==='apr23'||ev==='oct29'||i%3===0),route,dir:rand(i+130)>.5?1:-1});a.g.rotation.y=rand(i+130)*Math.PI*2;a.pace=isChild?2.4:1.25+rand(i+410)*.55;crowdActors.push(a);if(route==='museum')museumActors.push(a)}
  for(let i=0;i<soldiers;i++){let group=Math.floor(i/10),idx=i%10,row=Math.floor(idx/2),col=idx%2;let baseX=-18+group*22+col*3.6,baseZ=-62-group*16-row*3.1;let a=human(guardGroup,baseX,baseZ,{index:i,guard:true,height:2.7,group,row,col,dir:group%2? -1:1});guardActors.push(a)}
 }
 function buildHonorGuards(){honorGroup.clear();honorActors=[];const posts=[{x:-14,z:127,ry:Math.PI/2},{x:14,z:127,ry:-Math.PI/2},{x:-12,z:-103,ry:Math.PI/2},{x:12,z:-103,ry:-Math.PI/2}]; posts.forEach((p,i)=>{let a=human(honorGroup,p.x,p.z,{index:200+i,guard:true,height:2.76}); a.g.rotation.y=p.ry; a.g.position.y=terrainHeight(p.x,p.z)+.025; honorActors.push(a)});}
@@ -648,20 +655,20 @@ function tickCeremony(dt){
  return false;
 }
 // Holidays: 10 November remembrance is quiet; holidays have flags & balloons.
-function setCeremony(key){ceremonyGroup.clear();ceremonyActors=[];ceremonyBalloons=[];features.state.event=key;repopulate();clearCeremonyFlow();if(key==='none')return;
+function setCeremony(key){ceremonyGroup.clear();ceremonyActors=[];ceremonyBalloons=[];features.state.event=key;repopulate();clearCeremonyFlow();if(key==='none')return;ceremonyExtras(key);
  block(18,.55,6,stoneShadow,0,.9,-63,ceremonyGroup); block(1.8,2.1,1.2,trim,-3.6,2.05,-63,ceremonyGroup);
  // commander and protocol line
  let commander=human(ceremonyGroup,0,-51,{index:500,guard:true,height:2.82}); commander.g.rotation.y=Math.PI; ceremonyActors.push(commander);
  for(let i=0;i<6;i++){let x=-9+i*3.6; let s=human(ceremonyGroup,x,-59,{guard:true,index:520+i,height:2.72}); s.g.rotation.y=Math.PI; ceremonyActors.push(s);}
- for(let i=0;i<8;i++){let px=-10.5+i*3,pz=-54-(i%2)*2.6;let person=human(ceremonyGroup,px,pz,{index:30+i,height:2.55,flag:false});person.g.rotation.y=Math.PI; ceremonyActors.push(person);}
+ for(let i=0;i<8;i++){let px=-10.5+i*3,pz=-54-(i%2)*2.6;let person=human(ceremonyGroup,px,pz,{index:30+i,height:2.55,cloth:key==='nov10'?eventCloth(i):null,flag:false});person.g.rotation.y=Math.PI; ceremonyActors.push(person);}
  // organized square crowd
  let rows= key==='nov10' ? 8 : 10; let cols= key==='nov10' ? 18 : 22;
- for(let r=0;r<rows;r++){for(let c=0;c<cols;c++){let x=(c-(cols-1)/2)*5.6 + (r%2?1.5:0); let z=8 + r*5.9; let a=human(ceremonyGroup,x,z,{index:600+r*cols+c,height:(c%7===0?2.15:2.38),flag:key!=='nov10'&&(c%4===0)}); a.g.rotation.y=Math.PI; ceremonyActors.push(a);}}
+ for(let r=0;r<rows;r++){for(let c=0;c<cols;c++){let x=(c-(cols-1)/2)*5.6 + (r%2?1.5:0); let z=8 + r*5.9; let a=human(ceremonyGroup,x,z,{index:600+r*cols+c,height:(c%7===0?2.15:2.38),cloth:eventCloth(r*cols+c),bigFlag:key==='oct29'&&c%3===0,flag:key!=='nov10'&&(key==='apr23'||key==='oct29'||c%4===0)}); a.g.rotation.y=Math.PI; ceremonyActors.push(a);}}
  // side visitors spreading toward square edges
- for(let r=0;r<5;r++){for(let c=0;c<6;c++){for(let side of [-1,1]){let x=side*(46+c*4.6), z=4+r*7.2; let a=human(ceremonyGroup,x,z,{index:900+r*20+c,height:2.34,flag:key!=='nov10'&&c%2===0}); a.g.rotation.y=side<0?Math.PI*.86:-Math.PI*.86; ceremonyActors.push(a);}}}
+ for(let r=0;r<5;r++){for(let c=0;c<6;c++){for(let side of [-1,1]){let x=side*(46+c*4.6), z=4+r*7.2; let a=human(ceremonyGroup,x,z,{index:900+r*20+c,height:2.34,cloth:eventCloth(r*6+c),bigFlag:key==='oct29',flag:key!=='nov10'&&c%2===0}); a.g.rotation.y=side<0?Math.PI*.86:-Math.PI*.86; ceremonyActors.push(a);}}}
  if(key==='nov10'){let darkRibbon=makeMat(0x24262d);for(let side of [-1,1])block(.5,2.2,.2,darkRibbon,side*11,2,-62,ceremonyGroup); startCeremonyFlow(key); return }
  const redBalloon=makeMat(0xce2830),whiteBalloon=makeMat(0xf8f7f2);
- for(let i=0;i<88;i++){let x=(rand(i+811)*2-1)*85,z=-60+rand(i+912)*112,y=7+rand(i+932)*18; let b=sphere(.56,i%2?redBalloon:whiteBalloon,x,y,z,ceremonyGroup);b.scale.set(.9,1.16,.85);ceremonyBalloons.push({mesh:b,x,y,z,phase:i*.75})}
+ for(let i=0;i<(key==='apr23'?170:88);i++){let x=(rand(i+811)*2-1)*85,z=-60+rand(i+912)*112,y=7+rand(i+932)*18; let b=sphere(.56,balPick(key,i,redBalloon,whiteBalloon),x,y,z,ceremonyGroup);b.scale.set(.9,1.16,.85);ceremonyBalloons.push({mesh:b,x,y,z,phase:i*.75,up:key==='apr23'?.9+rand(i+5)*1.4:0})}
  startCeremonyFlow(key);
 }
 // User-configurable avatar appearance while preserving original animation rig.
@@ -801,6 +808,14 @@ guide:[
 "The monument was designed by architects Emin Onat and Orhan Arda and was completed in 1953.",
 "In front of you are the grand stairs leading to the mausoleum. Atatürk's remains were moved here on the tenth of November, 1953.",
 "Inside the Hall of Honor is the symbolic sarcophagus. Please keep your voices low and show respect."])},
+{id:'guide_hans',ad:'Reiseführer Hans',rol:'Tourenleiter (Deutsch)',dil:'de',x:-38,z:40,r:10,lines:Q([
+"Willkommen im Anıtkabir! Dieser Löwenweg ist 262 Meter lang und wird von 24 Löwenstatuen gesäumt.",
+"Die Löwen stammen aus der hethitischen Kunst und symbolisieren Stärke und Wache.",
+"Bitte gehen Sie leise und respektvoll weiter zur Zeremonienplatz."])},
+{id:'guide_claire',ad:'Guide Claire',rol:'Guide touristique (français)',dil:'fr',x:30,z:64,r:10,lines:Q([
+"Bienvenue au Anıtkabir, le mausolée de Mustafa Kemal Atatürk, fondateur de la République de Turquie.",
+"Dix tours entourent la place des cérémonies et chacune symbolise une valeur nationale.",
+"Merci de rester calmes et respectueux pendant la visite."])},
 {id:'rehber_ayse',ad:'Rehber Ayşe',rol:'Turist rehberi',dil:'tr',x:56,z:-18,r:9,lines:Q([
 "Burası Anıtkabir Müzesi'nin önü. Müzede Atatürk'ün eşyaları, hediyeleri ve Kurtuluş Savaşı panoramaları sergileniyor.",
 "Panoramalar Çanakkale, Sakarya Meydan Muharebesi ve Büyük Taarruz gibi dönüm noktalarını canlandırır.",
@@ -832,16 +847,43 @@ tour:[
 "Turun sonuna geldik. İstersen yeniden başlatıp tekrar dinleyebilirsin."])}
 ]};
 const S={sound:true};
+function resumeSay(){try{speechSynthesis.resume()}catch(e){}try{if(tour.on){tour.speaking=false}else if(cur){if(cur.kind==='guide')guideNext(cur);else if(cur.kind==='npc')npcShow(cur)}}catch(e){}}
+function toggleSound(on){S.sound=on===undefined?!S.sound:!!on;const c=document.getElementById('pSnd');if(c)c.checked=S.sound;if(S.sound){message('🔊 Ses açıldı');resumeSay()}else{stopSay();message('🔇 Ses kapatıldı')}}
+const TRSUB={
+"Welcome everyone. This is Anıtkabir, the mausoleum of Mustafa Kemal Atatürk, the founder of the Republic of Türkiye.":"Herkese hoş geldiniz. Burası Türkiye Cumhuriyeti'nin kurucusu Mustafa Kemal Atatürk'ün mozolesi Anıtkabir.",
+"The monument was designed by architects Emin Onat and Orhan Arda and was completed in 1953.":"Anıt, mimarlar Emin Onat ve Orhan Arda tarafından tasarlandı ve 1953'te tamamlandı.",
+"In front of you are the grand stairs leading to the mausoleum. Atatürk's remains were moved here on the tenth of November, 1953.":"Önünüzde mozoleye çıkan görkemli merdivenler var. Atatürk'ün naaşı buraya 10 Kasım 1953'te getirildi.",
+"Inside the Hall of Honor is the symbolic sarcophagus. Please keep your voices low and show respect.":"Şeref Holü'nde sembolik lahit bulunur. Lütfen sesinizi alçak tutun ve saygılı olun.",
+"Willkommen im Anıtkabir! Dieser Löwenweg ist 262 Meter lang und wird von 24 Löwenstatuen gesäumt.":"Anıtkabir'e hoş geldiniz! Bu Aslanlı Yol 262 metre uzunluğunda ve iki yanında 24 aslan heykeli var.",
+"Die Löwen stammen aus der hethitischen Kunst und symbolisieren Stärke und Wache.":"Aslanlar Hitit sanatından gelir; güç ve nöbeti simgeler.",
+"Bitte gehen Sie leise und respektvoll weiter zur Zeremonienplatz.":"Lütfen sessizce ve saygıyla Tören Meydanı'na doğru ilerleyin.",
+"Bienvenue au Anıtkabir, le mausolée de Mustafa Kemal Atatürk, fondateur de la République de Turquie.":"Türkiye Cumhuriyeti'nin kurucusu Mustafa Kemal Atatürk'ün mozolesi Anıtkabir'e hoş geldiniz.",
+"Dix tours entourent la place des cérémonies et chacune symbolise une valeur nationale.":"Tören meydanını on kule çevreler; her biri ulusal bir değeri simgeler.",
+"Merci de rester calmes et respectueux pendant la visite.":"Lütfen ziyaret boyunca sakin ve saygılı olun."};
+function subTR(e,L){if(e.d.dil==='tr'||LANG!=='tr')return;const t=TRSUB[L.t];if(!t)return;const x=document.createElement('div');x.style.cssText='font-size:.88em;color:#ffe2a8;margin-top:7px;border-top:1px solid #fff3;padding-top:5px';x.textContent='🇹🇷 '+t;$e('dlgText').appendChild(x)}
+const CINTRO={nov10:["10 Kasım – Atatürk'ü Anma","10 Kasım 1938'de saat 09.05'te Büyük Önder Mustafa Kemal Atatürk hayata veda etti. Bu yüzden bugün insanlar siyah giyer; saygı duruşu ve İstiklal Marşı ile onu anarlar."],
+oct29:["29 Ekim – Cumhuriyet Bayramı","29 Ekim 1923'te Cumhuriyet ilan edildi. Bugün egemenliğin millete ait olduğunu ve Cumhuriyet'i korumanın önemini, kocaman Türk bayraklarıyla kutluyoruz."],
+apr23:["23 Nisan – Çocuk Bayramı","23 Nisan 1920'de Türkiye Büyük Millet Meclisi açıldı. Atatürk bu bayramı dünya çocuklarına armağan etti. Çocuklar bayraklar ve renkli balonlarla kutluyor."],
+may19:["19 Mayıs – Gençlik ve Spor Bayramı","19 Mayıs 1919'da Mustafa Kemal Samsun'a çıkarak Millî Mücadele'yi başlattı. Atatürk bu bayramı gençliğe armağan etti; gençlik ve spor geleceğin gücüdür."]};
+window.__ceremonyIntro=key=>{const I=CINTRO[key];if(I){showBox('🇹🇷 '+I[0],I[1],[['🔇 Sesi kapat / 🔊 aç',()=>toggleSound()],['✕ Kapat',()=>hideBox()]]);say(I[1],{lang:'tr-TR'});setTimeout(()=>{try{hideBox()}catch(e){}},16000)}};
+
+
+
 const hash=s=>[...s].reduce((a,c)=>(a*31+c.charCodeAt(0))|0,7)>>>0,clampv=(v,a,b)=>Math.max(a,Math.min(b,v)),$e=id=>document.getElementById(id);
 const dang=(a,b)=>{let d=a-b;while(d>Math.PI)d-=6.2832;while(d<-Math.PI)d+=6.2832;return d};
 // ---- konuşma (TTS)
 let spTok=0;
+function pickVoice(lg,g){const L=lg.slice(0,2).toLowerCase();let vs=[];try{vs=speechSynthesis.getVoices().filter(v=>v.lang&&v.lang.toLowerCase().startsWith(L))}catch(e){}
+ const M=/tolga|\bcem\b|(?<!fe)male|erkek|david|mark|daniel|thomas|stefan|hans|jorge|diego|alex|fred|guy|ryan|george|james|paul|henri|claude|killian|conrad|florian/i,F=/female|kad[ıi]n|yelda|filiz|zira|hazel|susan|samantha|seda|emel|aria|jenny|hedda|katja|anna|amelie|julie|marie|google (t[üu]rk|turk|deutsch|fran|us english|uk english)/i;
+ if(g==='m'){const v=vs.find(v=>M.test(v.name));return{v:v||vs.find(v=>!F.test(v.name))||vs[0],exact:!!v}}
+ if(g==='f'){const v=vs.find(v=>F.test(v.name));return{v:v||vs.find(v=>!M.test(v.name))||vs[0],exact:!!v}}
+ return{v:vs[0],exact:true}}
 function stopSay(){spTok++;try{window.speechSynthesis&&speechSynthesis.cancel()}catch(e){}}
 function say(t,o,done){{const tt=trx(t);if(LANG!=='tr'&&tt!==t)o=Object.assign({},o,{lang:LANGV[LANG]});t=tt}const tok=++spTok;let fired=false;const fin=()=>{if(tok===spTok&&!fired){fired=true;done&&done()}};
  try{window.speechSynthesis&&speechSynthesis.cancel()}catch(e){}
  if(!S.sound||!window.speechSynthesis){setTimeout(fin,Math.min(9000,t.length*55+900));return}
  const u=new SpeechSynthesisUtterance(t),lg=o.lang||'tr-TR';u.lang=lg;u.rate=o.rate||1;u.pitch=o.pitch||1;u.volume=o.vol==null?1:o.vol;
- const v=speechSynthesis.getVoices().find(v=>v.lang&&v.lang.toLowerCase().startsWith(lg.slice(0,2).toLowerCase()));if(v)u.voice=v;
+ const g=o.g||null,pk=pickVoice(lg,g);if(pk.v)u.voice=pk.v;if(g==='m'&&!pk.exact)u.pitch=Math.min(u.pitch,o.old?.45:.6);if(g==='f'&&!pk.exact&&u.pitch<1)u.pitch=1.1;
  u.onend=fin;u.onerror=fin;speechSynthesis.speak(u);setTimeout(fin,t.length*95+4000)}
 // ---- görsel yardımcılar
 const grp=new T.Group();scene.add(grp);
@@ -877,7 +919,7 @@ function btns(list){const c=$e('dlgBtns');c.innerHTML='';list.forEach(([t,f])=>{
 function showBox(head,text,list,ben){box.style.display='block';$e('dlgHead').textContent=head;const tx=$e('dlgText');const tt=trx(text);tx.textContent=tt;if(LANG!=='tr'){const x2=document.createElement('div');x2.style.cssText='font-size:.82em;opacity:.72;margin-top:5px;border-top:1px solid #fff3;padding-top:4px';x2.dir='ltr';if(tt!==text){x2.textContent='🇹🇷 '+text;tx.appendChild(x2)}else if(TXERR[LANG]){x2.textContent=TXERR[LANG];tx.appendChild(x2)}}tx.style.color=ben?'#bfe3ff':'#fff7e6';btns(list||[])}
 function hideBox(){box.style.display='none'}
 // ---- NPC diyaloğu
-function voiceOf(e,L){return{lang:'tr-TR',pitch:L.k==='ben'?1.25:/gazi|nine/.test(e.d.id)?.75:e.d.guard?.85:1,rate:/gazi/.test(e.d.id)?.88:1}}
+function voiceOf(e,L){const gm=L.k==='ben'?null:/er_|gazi|ogr_murat|astsb/.test(e.d.id)?'m':/zeynep|nine|elif|ayse/.test(e.d.id)?'f':null;return{g:gm,old:/gazi/.test(e.d.id),lang:'tr-TR',pitch:L.k==='ben'?1.25:/gazi|nine/.test(e.d.id)?.75:e.d.guard?.85:1,rate:/gazi/.test(e.d.id)?.88:1}}
 const lineIdx=(e,id)=>e.d.lines.findIndex((l,i)=>(l.id==null?i+1:l.id)==id);
 function npcShow(e){const L=e.d.lines[e.i];if(!L)return;const n=e.d.lines.length;e.hist=e.hist||[];const lst=[];
  if(e.hist.length)lst.push(['◀ Geri',()=>{e.i=e.hist.pop();npcShow(e)}]);
@@ -889,8 +931,8 @@ function npcGo(e,dlt){e.i=clampv(e.i+dlt,0,e.d.lines.length-1);npcShow(e)}
 document.addEventListener('keydown',ev=>{if(!cur||cur.kind!=='npc'||/INPUT|TEXTAREA/.test(ev.target.tagName))return;if(ev.key==='Enter'||ev.key.toLowerCase()==='e'){const b=[...document.querySelectorAll('#dlgBtns button')].find(x=>x.textContent.startsWith('Devam'));b&&b.click()}});
 // ---- rehber anlatımı (yeşil alan)
 function guideNext(e){if(cur!==e||tour.on)return;const L=e.d.lines[e.gi];const d=Math.hypot(pos.x-e.d.x,pos.z-e.d.z);
- showBox('🟢 '+e.d.ad+' · '+e.d.rol,L.t,[['🔇/🔊',()=>{S.sound=!S.sound;if(!S.sound)stopSay()}]]);
- say(L.t,{lang:e.d.dil==='en'?'en-US':'tr-TR',pitch:/sarah|ayse|elif/i.test(e.d.id)?1.15:.95,vol:clampv(1-d/e.R*.55,.35,1)},()=>{if(cur!==e)return;e.gi=(e.gi+1)%e.d.lines.length;setTimeout(()=>cur===e&&guideNext(e),900)})}
+ showBox('🟢 '+e.d.ad+' · '+e.d.rol,L.t,[['🔇 Sesi kapat / 🔊 aç',()=>toggleSound()]]);subTR(e,L);
+ say(L.t,{g:/mehmet|hans/.test(e.d.id)?'m':'f',lang:LANGV[e.d.dil]||'tr-TR',pitch:/sarah|ayse|elif/i.test(e.d.id)?1.15:.95,vol:clampv(1-d/e.R*.55,.35,1)},()=>{if(cur!==e)return;e.gi=(e.gi+1)%e.d.lines.length;setTimeout(()=>cur===e&&guideNext(e),900)})}
 function enter(e){cur=e;score(e.kind+':'+e.d.id,e.kind==='npc'?10:4);const run=()=>{if(cur!==e)return;if(e.kind==='npc'){e.i=0;e.hist=[];npcShow(e)}else{e.gi=0;guideNext(e)}};if(LANG==='tr')run();else{showBox(e.d.ad,'⏳ …',[]);ensure(e.d.lines.flatMap(l=>[l.t,...(l.opts||[]).map(o=>o.t)])).then(run)}}
 function leave(){if(!cur)return;stopSay();hideBox();cur=null}
 // ---- mihmandar turu
@@ -961,7 +1003,7 @@ const host=$e('xVig').parentElement;
 for(const [id,tx,f] of [['dlgBtn','💬 Diyaloglar',()=>{panel.style.display=panel.style.display==='block'?'none':'block'}],['tourBtn','🧭 Mihmandar turu',()=>tour.on?endTour():startTour(0)]]){const b=document.createElement('button');b.id=id;b.textContent=tx;b.onclick=f;host.appendChild(b)}
 $e('dlgX').onclick=()=>panel.style.display='none';
 $e('pTour').onclick=()=>tour.on?endTour():startTour(0);$e('pNext').onclick=()=>{if(!tour.on)startTour(0);else{stopSay();tour.speaking=false;tourGo(tour.idx+1)}};$e('pHere').onclick=explainHere;$e('pCall').onclick=summon;
-$e('pSnd').onchange=e=>{S.sound=e.target.checked;if(!S.sound)stopSay()};
+$e('pSnd').onchange=e=>toggleSound(e.target.checked);
 $e('pAll').onclick=()=>saveFile('anitkabir_diyaloglar.csv',toCSV([...DATA.npc.map(d=>['npc',d]),...DATA.guide.map(d=>['guide',d]),...DATA.tour.map(d=>['tour',d])]));
 $e('pTpl').onclick=()=>saveFile('diyalog_sablon.csv',toCSV([['npc',{id:'yeni_kisi',ad:'Yeni Kişi',rol:'Tarih Öğretmeni',x:Math.round(pos.x+5),z:Math.round(pos.z),lines:[{k:'npc',t:'Merhaba! Ne öğrenmek istersin?'},{k:'ben',t:'Milli Mücadele hakkında bilgi verir misiniz?'},{k:'npc',t:'Elbette. Buraya kendi metnini yazabilirsin.'}]}]]));
 $e('pUp').onclick=()=>$e('pFile').click();
@@ -1186,7 +1228,7 @@ setGA(GA);
  host.style.position='fixed';host.style.transformOrigin='top left';
  if(st.x==null||st.y==null){const r=host.getBoundingClientRect();st.x=r.left;st.y=r.top}
  const clampP=()=>{const r=host.getBoundingClientRect();st.x=Math.min(Math.max(st.x,-r.width+70),innerWidth-70);st.y=Math.min(Math.max(st.y,0),innerHeight-40)};
- const apply=()=>{host.style.transform='scale('+st.s+')';host.style.maxHeight=(82/st.s)+'dvh';host.style.left=st.x+'px';host.style.top=st.y+'px';clampP();host.style.left=st.x+'px';host.style.top=st.y+'px'};
+ const apply=()=>{host.style.transform='scale('+st.s+')';clampP();host.style.left=st.x+'px';host.style.top=st.y+'px';host.style.maxHeight=Math.max(120,(innerHeight-st.y-8)/st.s)+'px'};
  const dr=document.createElement('div');dr.id='mnDrag';dr.textContent='⠿ Taşı (sürükle)';dr.style.cssText='cursor:grab;touch-action:none;user-select:none;text-align:center;font-size:11px;padding:5px;border-radius:8px;background:#ffffff22';host.insertBefore(dr,host.firstChild);
  let ox=0,oy=0,on=false;
  dr.addEventListener('pointerdown',e=>{on=true;ox=e.clientX-st.x;oy=e.clientY-st.y;dr.setPointerCapture(e.pointerId);dr.style.cursor='grabbing';e.preventDefault()});
@@ -1423,7 +1465,7 @@ function renderLoop(){requestAnimationFrame(renderLoop);let dt=Math.min(clock.ge
  escortActors.forEach(({actor:a,side},i)=>{const bx=pos.x+side*Math.cos(yaw)*3.3+Math.sin(yaw)*2.6;const bz=pos.z-side*Math.sin(yaw)*3.3+Math.cos(yaw)*2.6;
  a.g.position.x+=(bx-a.g.position.x)*Math.min(1,dt*3);a.g.position.z+=(bz-a.g.position.z)*Math.min(1,dt*3);a.g.position.y=terrainHeight(a.g.position.x,a.g.position.z)+.025;
  a.g.rotation.y=-yaw;const step=Math.sin(elapsed*7+i*.5)*(moving?.45:0);a.legsH[0].rotation.x=step;a.legsH[1].rotation.x=-step;a.armsH[0].rotation.x=-step*.7;a.armsH[1].rotation.x=step*.7;});
- ceremonyBalloons.forEach((b,i)=>{b.mesh.position.y=b.y+Math.sin(elapsed*.65+b.phase)*.85;b.mesh.position.x=b.x+Math.sin(elapsed*.25+b.phase)*1.9});
+ ceremonyBalloons.forEach((b,i)=>{b.mesh.position.y=b.y+(b.up?(elapsed*b.up)%55:0)+Math.sin(elapsed*.65+b.phase)*.85;b.mesh.position.x=b.x+Math.sin(elapsed*.25+b.phase)*1.9});
  } renderer.render(scene,camera)}
  if(performance.now()-lastDate>220){lastDate=performance.now();$('loc').textContent='📍 '+stops[selected].short;$('cinemaPlace').textContent=stops[selected].short.toLocaleUpperCase('tr-TR');$('cinemaCount').textContent=String(selected+1).padStart(2,'0')+' / '+String(stops.length).padStart(2,'0');drawMap(true);if(mode==='2d')drawMap()}
 }
@@ -1618,11 +1660,11 @@ tb.forEach(b=>b.onclick=()=>{tKey=b.dataset.t;try{localStorage.setItem('anit_tim
 /* 3B gökyüzü, ışık, bulut */
 function init3d(){
  const T=THREE;let sun,hemi;
- scene.traverse(o=>{if(o.isDirectionalLight&&o.castShadow)sun=o;if(o.isHemisphereLight)hemi=o});
+ scene.traverse(o=>{if(o.isDirectionalLight&&o.castShadow)sun=o;if(o.isHemisphereLight)hemi=o});scene.traverse(o=>{if(o.isMesh&&o.material&&o.material.isShaderMaterial&&o.geometry&&o.geometry.parameters&&o.geometry.parameters.radius===600)o.visible=false});
  const mat=new T.ShaderMaterial({side:T.BackSide,depthWrite:false,fog:false,
-  uniforms:{top:{value:new T.Color()},bot:{value:new T.Color()},sd:{value:new T.Vector3(0,1,0)},night:{value:0}},
+  uniforms:{cTop:{value:new T.Color()},cBot:{value:new T.Color()},sunD:{value:new T.Vector3(0,1,0)},night:{value:0}},
   vertexShader:'varying vec3 v;void main(){v=normalize(position);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
-  fragmentShader:'uniform vec3 top,bot,sd;uniform float night;varying vec3 v;float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}void main(){float y=max(v.y,0.);vec3 c=mix(bot,top,pow(y,.55));float g=max(dot(normalize(v),sd),0.);c+=vec3(1.,.75,.45)*(pow(g,48.)*.9+pow(g,6.)*.18)*(1.-night*.7);vec2 q=floor(v.xz/(v.y+1.2)*140.);c+=vec3(step(.9975,h(q))*night*smoothstep(.1,.4,v.y));gl_FragColor=vec4(c,1.);\n#include <tonemapping_fragment>\n#include <colorspace_fragment>\n}'});
+  fragmentShader:'uniform vec3 cTop,cBot,sunD;uniform float night;varying vec3 v;float hsh(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}void main(){float y=max(v.y,0.);vec3 c=mix(cBot,cTop,pow(y,.55));float g=max(dot(normalize(v),sunD),0.);c+=vec3(1.,.75,.45)*(pow(g,48.)*.9+pow(g,6.)*.18)*(1.-night*.7);vec2 q=floor(v.xz/(v.y+1.2)*140.);float st=step(.9975,hsh(q))*night*smoothstep(.1,.4,max(v.y,0.));c+=vec3(st);gl_FragColor=vec4(pow(c,vec3(1./2.2)),1.);}',toneMapped:false});
  const sky=new T.Mesh(new T.SphereGeometry(700,32,16),mat);sky.renderOrder=-10;sky.frustumCulled=false;scene.add(sky);
  const cv=document.createElement('canvas');cv.width=cv.height=128;const g=cv.getContext('2d');
  [[64,70,46],[40,76,32],[88,76,34],[60,52,30]].forEach(([x,y,r])=>{const q=g.createRadialGradient(x,y,0,x,y,r);q.addColorStop(0,'rgba(255,255,255,.95)');q.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=q;g.fillRect(0,0,128,128)});
@@ -1640,7 +1682,7 @@ function init3d(){
    tg.top.set(p.top);tg.bot.set(p.bot);tg.fog.set(p.fog);tg.sun.set(p.sun);tg.cl.set(p.cl);tg.sp.set(...p.sp);
    cur.top.lerp(tg.top,k);cur.bot.lerp(tg.bot,k);cur.fog.lerp(tg.fog,k);cur.sun.lerp(tg.sun,k);cur.cl.lerp(tg.cl,k);cur.sp.lerp(tg.sp,k);
    cur.si+=(p.si-cur.si)*k;cur.hemi+=(p.hemi-cur.hemi)*k;cur.ex+=(p.ex-cur.ex)*k;cur.night+=(p.night-cur.night)*k;
-   mat.uniforms.top.value.copy(cur.top);mat.uniforms.bot.value.copy(cur.bot);mat.uniforms.night.value=cur.night;mat.uniforms.sd.value.copy(cur.sp).normalize();
+   mat.uniforms.cTop.value.copy(cur.top);mat.uniforms.cBot.value.copy(cur.bot);mat.uniforms.night.value=cur.night;mat.uniforms.sunD.value.copy(cur.sp).normalize();
    if(sun){sun.color.copy(cur.sun);sun.intensity=cur.si;sun.position.copy(cur.sp)}
    if(hemi)hemi.intensity=cur.hemi;
    renderer.toneMappingExposure=cur.ex;
