@@ -99,6 +99,46 @@ body.cinematic #settingsBtn.fab{opacity:1}
  #w-dock{left:6px;bottom:6px;width:calc(100vw - 12px)}
 }
 
+</style><style>
+/* ===== Tasarım yenileme v2: yalnızca görsel katman, düzen ve işlev değişmedi ===== */
+:root{--gold:#e0b862;--gold2:#f4dba0;--red:#c8372d;--red2:#8f1f1c;--navy:#0c2233;--ink:#f6f1e4;accent-color:var(--gold)}
+body{background:#0c2233;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+.glass{border-radius:16px!important;border:1px solid rgba(244,219,160,.22)!important;box-shadow:0 12px 40px rgba(2,10,18,.45),inset 0 1px 0 rgba(255,255,255,.12)!important;backdrop-filter:blur(14px) saturate(1.35);-webkit-backdrop-filter:blur(14px) saturate(1.35)}
+button,select{transition:background .18s,transform .12s,border-color .18s,box-shadow .18s}
+button{border-radius:12px;border:1px solid rgba(255,255,255,.2);background:linear-gradient(180deg,rgba(40,78,106,.85),rgba(20,44,65,.9));font-weight:600;letter-spacing:.01em;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+button:hover{background:linear-gradient(180deg,#3a7096,#245070);border-color:var(--gold);transform:translateY(-1px)}
+button:active{transform:translateY(0) scale(.97)}
+button.active{color:#fff!important;text-shadow:0 1px 2px rgba(0,0,0,.35);background:linear-gradient(180deg,#d6463a,var(--red2));border-color:#ffcfc0;box-shadow:0 0 0 1px #ffffff22,0 4px 14px rgba(200,55,45,.45)}
+button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+#brand{border-left:4px solid var(--red)!important;font-family:Georgia,'Times New Roman',serif;letter-spacing:.04em}
+#brand small{font-family:system-ui,sans-serif;letter-spacing:.01em;color:var(--gold2)}
+#info h3,#expPanel h2,#expPanel h3,#help h2{font-family:Georgia,'Times New Roman',serif;color:var(--gold2);letter-spacing:.01em}
+#info p{color:var(--ink);line-height:1.65}
+#status{line-height:1.8;border-left:3px solid var(--gold)!important}
+#experienceBar button{border-radius:999px;padding:8px 14px;background:linear-gradient(180deg,rgba(18,42,62,.92),rgba(10,28,44,.95));border-color:rgba(244,219,160,.35);pointer-events:auto;backdrop-filter:blur(8px)}
+#experienceBar button:hover{background:linear-gradient(180deg,#2c5c7e,#17394f)}
+#help{background:radial-gradient(ellipse at 50% 30%,rgba(20,60,88,.78),rgba(4,14,24,.9))!important;backdrop-filter:blur(6px)}
+#help .inside{max-width:640px;max-height:92dvh;overflow:auto;padding:28px 30px!important;border-top:3px solid var(--gold)!important;line-height:1.7;box-shadow:0 24px 70px rgba(0,0,0,.6)!important}
+#help h2{font-size:clamp(22px,4vw,30px);margin:0 0 12px;text-align:center}
+#help p{color:var(--ink);opacity:.95}
+#startBtn{color:#fff!important;text-shadow:0 1px 2px rgba(0,0,0,.4);display:block;margin:18px auto 4px;padding:14px 34px;font-size:17px;border-radius:999px;background:linear-gradient(180deg,#e04a3d,var(--red2));border:1px solid #ffd2c4;box-shadow:0 8px 26px rgba(200,55,45,.5);letter-spacing:.03em}
+#startBtn:hover{background:linear-gradient(180deg,#f05b4d,#a42622);box-shadow:0 10px 30px rgba(200,55,45,.65)}
+#toast{border-radius:999px!important;padding:10px 20px!important;background:rgba(12,34,51,.94)!important;border:1px solid rgba(244,219,160,.4);box-shadow:0 8px 28px rgba(0,0,0,.45);font-weight:500}
+#expPanel{border-radius:18px!important;border-color:rgba(244,219,160,.4)!important;background:linear-gradient(180deg,rgba(18,34,46,.96),rgba(10,22,32,.96))!important;backdrop-filter:blur(14px)}
+.expRecord{border-radius:12px;background:rgba(255,255,255,.06)!important;border-color:rgba(244,219,160,.2)!important}
+.expNotice{color:#cfd9de;font-size:12px}
+#ceremonyBadge{background:linear-gradient(90deg,#6b1d1f,#a3302a,#6b1d1f)!important;border-color:var(--gold)!important;letter-spacing:.06em;font-weight:700;box-shadow:0 6px 22px rgba(0,0,0,.4)}
+#ceremonyStatus{border-radius:16px!important;font-family:Georgia,serif}
+.winbar{background:linear-gradient(180deg,rgba(255,255,255,.1),rgba(255,255,255,0))}
+.winbar button{padding:3px 9px}
+#loading{border-radius:999px!important}
+select,input[type=text],textarea{border-radius:10px;border:1px solid rgba(255,255,255,.28);background:rgba(10,28,42,.75);color:#fff}
+input[type=range]{height:22px}
+#joystick button{border-radius:14px;font-size:16px;background:linear-gradient(180deg,rgba(40,78,106,.8),rgba(20,44,65,.85))}
+#miniWrap,#minimap{border-radius:14px}
+*{scrollbar-width:thin;scrollbar-color:rgba(244,219,160,.45) transparent}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media(max-width:760px){#help .inside{padding:20px 18px!important}#startBtn{width:100%}}
 </style></head><body>
 <canvas id="world"></canvas><canvas id="map"></canvas><div id="fallback"><div>3B sahne yüklenemedi. İnternet erişimi gerekiyorsa bağlantını kontrol et.<p>2B Harita düğmesi yine çalışır.</p><button id="fallbackMap">2B haritaya geç</button></div></div><div id="loading" class="glass">3B Anıtkabir sahnesi hazırlanıyor…</div>
 <div id="topbar"><div id="brand" class="glass">🇹🇷 ANITKABİR • YAŞAYAN GEZİ 16.0<small>Çocuklar için interaktif eğitim • Tören Başlatma Motoru Yenilendi</small></div><div class="spacer"></div><button id="modeBtn">🗺️ 2B Harita</button><button id="guideBtn">🎧 Rehber: Kapalı</button><button id="fullBtn">⛶ Tam Ekran</button><button id="albumBtn">📷 Albüm</button><button id="settingsBtn">⚙ Ayarlar ▾</button></div>
@@ -401,19 +441,20 @@ for(let i=0;i<N;i++){let x,z;if(i<230){x=(r()*2-1)*58;z=-56+r()*20}else{x=(r()*2
 for(let x=-52;x<=52;x+=2){block(.9,.7,.5,trim,x,43.3,-85.3,scene,false)}
 for(let x=-52;x<=52;x+=13){block(2.6,1.4,1.2,stone2,x,49.3,-86,scene,false)}
 // Vertical Turkish flag positioned above the doorway, leaving the lower portal walkable.
-const bannerCanvas=document.createElement('canvas');bannerCanvas.width=512;bannerCanvas.height=1024;const bg=bannerCanvas.getContext('2d');
-bg.fillStyle='#c8102e';bg.fillRect(0,0,512,1024);
-
-bg.fillStyle='#fff';bg.beginPath();bg.arc(256,300,128,0,Math.PI*2);bg.fill();bg.fillStyle='#c8102e';bg.beginPath();bg.arc(256,348,102,0,Math.PI*2);bg.fill();
-const pts=[];for(let s=0;s<10;s++){let a=s*Math.PI/5-Math.PI/2,r=s%2?31:77;pts.push([256+Math.cos(a)*r,530+Math.sin(a)*r])}
-bg.fillStyle='#fff';bg.beginPath();pts.forEach(([xx,yy],n)=>n?bg.lineTo(xx,yy):bg.moveTo(xx,yy));bg.closePath();bg.fill();
-for(let f=0;f<11;f++){bg.fillStyle='rgba(0,0,0,'+((f%2)?.05:.1)+')';bg.fillRect(f*48,0,16,1024)}
+// Resmî oranlara göre Türk bayrağı (3:2): hilal + beş köşeli yıldız. Tüm bayraklar bu çizimi kullanır.
+function paintTurkishFlag(g,w,h){const H=h;g.fillStyle='#e31f26';g.fillRect(0,0,w,h);const cy=H/2,cx=H*.5,R=H*.25,r=H*.2,ox=H*.0625;
+g.fillStyle='#fff';g.beginPath();g.arc(cx,cy,R,0,Math.PI*2);g.fill();g.fillStyle='#e31f26';g.beginPath();g.arc(cx+ox,cy,r,0,Math.PI*2);g.fill();
+const sx=H*.835,sr=H*.125;g.fillStyle='#fff';g.beginPath();for(let k=0;k<10;k++){const a=Math.PI+k*Math.PI/5,rr=k%2?sr*.4:sr,x=sx+Math.cos(a)*rr,y=cy+Math.sin(a)*rr;k?g.lineTo(x,y):g.moveTo(x,y)}g.closePath();g.fill()}
+// Dikey asılı bayrak: aynı bayrak 90° döndürülmüş (gönder tarafı üstte).
+const bannerCanvas=document.createElement('canvas');bannerCanvas.width=512;bannerCanvas.height=768;const bg=bannerCanvas.getContext('2d');
+bg.save();bg.translate(512,0);bg.rotate(Math.PI/2);paintTurkishFlag(bg,768,512);bg.restore();
+for(let f=0;f<11;f++){bg.fillStyle='rgba(0,0,0,'+((f%2)?.04:.08)+')';bg.fillRect(f*48,0,16,768)}
 const bannerTexture=new T.CanvasTexture(bannerCanvas);bannerTexture.colorSpace=T.SRGBColorSpace;
 const bannerMat=new T.MeshStandardMaterial({map:bannerTexture,side:T.DoubleSide,roughness:1});
-const hangingBanner=mesh(new T.PlaneGeometry(11.5,25.0,14,24),bannerMat,0,31.0,-86.25,scene,false);
+const hangingBanner=mesh(new T.PlaneGeometry(11.5,17.25,14,24),bannerMat,0,31.0,-86.25,scene,false);
 // A separate roof drape, visible from high cameras: the same genuine Turkish crescent-and-star pattern.
 const roofFlagMat=new T.MeshStandardMaterial({map:bannerTexture,side:T.DoubleSide,roughness:.85,transparent:false});
-const roofFlag=mesh(new T.PlaneGeometry(22,36),roofFlagMat,0,48.55,-110,scene,false);roofFlag.rotation.x=-Math.PI/2;
+const roofFlag=mesh(new T.PlaneGeometry(22,33),roofFlagMat,0,48.55,-110,scene,false);roofFlag.rotation.x=-Math.PI/2;
 for(let side of [-1,1]){block(2,1.9,55,trim,side*53.5,47.8,-112,scene,false)}
 const hallFill=new T.PointLight(0xffe7bd,42,85,2);hallFill.position.set(0,14,-111);scene.add(hallFill);
 // Inside hall: the symbolic sarcophagus, on a raised pedestal beyond the accessible entrance.
@@ -425,9 +466,8 @@ for(let side of [-1,1])for(let zz=-77;zz<=-63;zz+=3.6){block(.45,.22,3.1,stone2,
 for(let xx=-30;xx<=30;xx+=3.5){block(3.2,.035,.06,stoneShadow,xx,.59,-58,scene,false)}
 // Monument flagpole with animated cloth mesh.
 cylinder(.22,.28,39,metal,68,19.5,17,16);sphere(.7,gold,68,39.4,17);
-const flagGeometry=new T.PlaneGeometry(11,6,28,12);const flagMat=new T.MeshStandardMaterial({color:0xbe2629,side:T.DoubleSide,roughness:.8});const flag=mesh(flagGeometry,flagMat,73.4,34.1,17);const fp=flagGeometry.attributes.position;const flagOrig=Float32Array.from(fp.array);
-const moon=mesh(new T.RingGeometry(.95,1.42,32,1,0,Math.PI*1.68),white,0,0,0,flag);moon.position.set(-.1,.1,.018);moon.rotation.z=-.35;moon.castShadow=false;
-const starShape=new T.Shape();for(let i=0;i<10;i++){let a=i*Math.PI/5-Math.PI/2,r=i%2?.35:.82;let x=Math.cos(a)*r,y=Math.sin(a)*r;i?starShape.lineTo(x,y):starShape.moveTo(x,y)}starShape.closePath();let star=mesh(new T.ShapeGeometry(starShape),white,1.7,.1,.025,flag);star.castShadow=false;
+const flagGeometry=new T.PlaneGeometry(12,8,36,16);const bigFlagTx=mkCanvasTexture(900,600,paintTurkishFlag,1,1);bigFlagTx.wrapS=bigFlagTx.wrapT=T.ClampToEdgeWrapping;const flagMat=new T.MeshStandardMaterial({map:bigFlagTx,side:T.DoubleSide,roughness:.8});const flag=mesh(flagGeometry,flagMat,74,34.5,17);const fp=flagGeometry.attributes.position;const flagOrig=Float32Array.from(fp.array);
+
 // Procedural shrubs + more detailed olive/cypress style trees, deterministic distribution.
 const rand=(n)=>{let v=Math.sin(n*127.1+28.4)*43758.5453;return v-Math.floor(v)};
 const blobGeos=[1,2,3,4].map(seed=>{const g=new T.IcosahedronGeometry(1,2),p=g.attributes.position,col=new Float32Array(p.count*3),v=new T.Vector3();for(let k=0;k<p.count;k++){v.fromBufferAttribute(p,k);const n=1+.2*Math.sin(v.x*3.1+seed)*Math.cos(v.z*2.7+seed*1.3)+.13*Math.sin(v.y*5.3+seed*2)+(rand(v.x*12.9+v.y*78.2+v.z*37.7+seed)-.5)*.16;p.setXYZ(k,v.x*n,v.y*n*.8,v.z*n);const br=.5+.5*(v.y*.5+.5)+(rand(v.x*7.7+v.z*3.3+seed)-.5)*.14;col[k*3]=br;col[k*3+1]=br;col[k*3+2]=br}g.setAttribute('color',new T.BufferAttribute(col,3));g.computeVertexNormals();return g});
@@ -492,7 +532,7 @@ const guestClothes=[makeMat(0x355a73),makeMat(0x8c3e3d),makeMat(0x947044),makeMa
 let crowdActors=[],guardActors=[],museumActors=[],honorActors=[],ceremonyActors=[],ceremonyBalloons=[],wreathMesh=null,escortActors=[],escortGroup=new T.Group(),escortStart=0,guestMode=features.state.gender;scene.add(escortGroup);const raycaster=new T.Raycaster();let moveTarget=null,ceremonyTimers=[];
 const weatherGroup=new T.Group();scene.add(weatherGroup);let weatherDrops=[];let weatherMode=features.state.weather||'auto',weatherAmount=Number(features.state.weatherAmount||60);
 const HG={torso:new T.CylinderGeometry(.3,.36,.95,14),neck:new T.CylinderGeometry(.09,.11,.16,10),head:new T.SphereGeometry(.24,16,12),arm:new T.CapsuleGeometry(.095,.5,4,8),leg:new T.CapsuleGeometry(.13,.78,4,8),hand:new T.SphereGeometry(.075,8,6),shoe:new T.BoxGeometry(.18,.1,.42),sh:new T.SphereGeometry(.15,10,8),hair:new T.SphereGeometry(.255,14,10),helm:new T.SphereGeometry(.29,16,10,0,Math.PI*2,0,Math.PI*.55),rifle:new T.CylinderGeometry(.025,.025,1.4,6),eye:new T.SphereGeometry(.03,6,4),nose:new T.SphereGeometry(.04,6,5),belt:new T.CylinderGeometry(.37,.37,.08,14),disc:new T.CircleGeometry(.55,16),arm2:new T.CapsuleGeometry(.095,.22,4,8),arm3:new T.CapsuleGeometry(.085,.22,4,8),thigh:new T.CapsuleGeometry(.135,.34,4,8),shin:new T.CapsuleGeometry(.115,.4,4,8),pole:new T.CylinderGeometry(.026,.026,2.4,6),flagGeo:(()=>{const q=new T.PlaneGeometry(.95,.633,10,4);q.translate(.475,0,0);return q})(),hat:new T.CylinderGeometry(.27,.3,.16,12)};
-const flagTx=mkCanvasTexture(600,400,(g,w,h)=>{g.fillStyle='#c8102e';g.fillRect(0,0,w,h);g.fillStyle='#fff';g.beginPath();g.arc(150,200,100,0,6.2832);g.fill();g.fillStyle='#c8102e';g.beginPath();g.arc(187.5,200,80,0,6.2832);g.fill();g.fillStyle='#fff';g.beginPath();for(let s=0;s<10;s++){const a=Math.PI+s*Math.PI/5,rr=s%2?24:60,x=322.5+Math.cos(a)*rr,y=200+Math.sin(a)*rr;s?g.lineTo(x,y):g.moveTo(x,y)}g.closePath();g.fill()},1,1);
+const flagTx=mkCanvasTexture(600,400,paintTurkishFlag,1,1);flagTx.wrapS=flagTx.wrapT=T.ClampToEdgeWrapping;
 const FU={value:0};window.__FU=FU;const flagCloth=new T.MeshStandardMaterial({map:flagTx,side:T.DoubleSide,roughness:.8});
 flagCloth.onBeforeCompile=sh=>{sh.uniforms.uTime=FU;sh.vertexShader='uniform float uTime;\n'+sh.vertexShader.replace('#include <begin_vertex>','vec3 transformed=vec3(position);float w=position.x/.95;transformed.z+=sin(uTime*6.+position.x*9.+modelMatrix[3].x*.7+modelMatrix[3].z*.5)*.085*w;transformed.y+=sin(uTime*4.+position.x*5.)*.02*w;')};
 function bendJoints(a){if(!a||!a.legsH)return;for(const l of a.legsH)l.userData.k&&(l.userData.k.rotation.x=Math.abs(l.rotation.x)*1.1);for(const m of a.armsH)m.userData.k&&(m.userData.k.rotation.x=-(Math.abs(m.rotation.x)*.7+.12))}const SHM=new T.MeshBasicMaterial({color:0x000000,transparent:true,opacity:.28,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-2});
@@ -901,8 +941,8 @@ function build(kind,d){const root=new T.Group();grp.add(root);const y=terrainHei
  return e}
 function rebuildAll(){destroyAll();cur=null;DATA.npc.forEach(d=>build('npc',d));DATA.guide.forEach(d=>build('guide',d))}
 // ---- mihmandar
-const M=human(grp,3,150,{index:5,height:2.7});const blazer=new T.MeshStandardMaterial({color:0x1c3550,roughness:.85});
-M.g.traverse(o=>{if(o.isMesh&&o.material===guestClothes[5%guestClothes.length])o.material=blazer});
+const M=human(grp,3,150,{index:6,height:2.7});const blazer=new T.MeshStandardMaterial({color:0x1c3550,roughness:.85});
+M.g.traverse(o=>{if(o.isMesh&&o.material===guestClothes[6%guestClothes.length])o.material=blazer});
 {const sc=new T.Mesh(new T.TorusGeometry(.17,.05,6,12),new T.MeshStandardMaterial({color:0xc8102e}));sc.rotation.x=Math.PI/2;sc.position.y=2.02;M.g.add(sc);const tg=tag('Mihmandar','#9ad0ff');tg.position.y=3.35;M.g.add(tg)}
 M.g.position.y=terrainHeight(3,150)+.025;
 const marker=ringMesh(5,0x3a9bff);marker.visible=false;scene.add(marker);
@@ -954,7 +994,7 @@ function tourTick(el,dt){const g=M.g,gx=g.position.x,gz=g.position.z,dp=Math.hyp
   else if(far){tour.hold=true;tour.speaking=false;stopSay();showBox('🧭 Mihmandar','Seni bekliyorum, bana yaklaş…',tourBtns())}
   if(!tour.hold){
    if(!tour.arrived){const w=tour.path[0];if(!w){tour.arrived=true;tour.li=0}else{const dx=w.x-gx,dz=w.z-gz,d=Math.hypot(dx,dz);if(d<.6)tour.path.shift();else{face(w.x,w.z,6);const sp=Math.min(d,6.2*dt);g.position.x+=dx/d*sp;g.position.z+=dz/d*sp;walking=true}}}
-   else if(!tour.speaking&&tour.li<s.lines.length){tour.speaking=true;const t=s.lines[tour.li].t;showBox('🧭 Mihmandar · '+s.ad+' ('+(tour.li+1)+'/'+s.lines.length+')',t,tour.single?[['⏹ Kapat',()=>endTour()]]:tourBtns());say(t,{lang:'tr-TR',pitch:.9},()=>{tour.speaking=false;tour.li++})}
+   else if(!tour.speaking&&tour.li<s.lines.length){tour.speaking=true;const t=s.lines[tour.li].t;showBox('🧭 Mihmandar · '+s.ad+' ('+(tour.li+1)+'/'+s.lines.length+')',t,tour.single?[['⏹ Kapat',()=>endTour()]]:tourBtns());say(t,{lang:'tr-TR',g:'m',pitch:.9},()=>{tour.speaking=false;tour.li++})}
    else if(!tour.speaking&&tour.li>=s.lines.length){tour.w+=dt;if(tour.w>1.8){tour.w=0;tour.single?endTour():tourGo(tour.idx+1)}}
    if(tour.arrived)face(pos.x,pos.z,3)}}
  g.position.y=terrainHeight(g.position.x,g.position.z)+.025;
@@ -998,9 +1038,9 @@ function renderList(){const L=$e('dlgList');L.innerHTML='';const row=(kind,d,ic)
   b('Git',()=>{moveTarget={x:d.x,z:d.z+(kind==='tour'?0:4)}});b('CSV',()=>saveFile((d.id||'diyalog')+'.csv',toCSV([[kind,d]])));
   b('Sil',()=>{DATA[kind]=DATA[kind].filter(o=>o!==d);leave();rebuildAll();renderList()});L.appendChild(r)};
  DATA.npc.forEach(d=>row('npc',d,'🔴'));DATA.guide.forEach(d=>row('guide',d,'🟢'));DATA.tour.forEach(d=>row('tour',d,'🧭'))}
-function setPanelBtn(){const b=$e('pTour'),t=$e('tourBtn');const on=tour.on;if(b)b.textContent=on?'⏹ Turu bitir':'🧭 Turu başlat';if(t)t.textContent=on?'🧭 Mihmandar: açık':'🧭 Mihmandar turu'}
+function setPanelBtn(){const b=$e('pTour'),t=$e('tourBtn');const on=tour.on;if(b)b.textContent=on?'⏹ Turu bitir':'🧭 Turu başlat';if(t)t.textContent=on?'🧭 Mihmandar: açık':'🧭 Mihmandar turu';const u=$e('topTourBtn');if(u){u.textContent=on?'🧭 Mihmandar: Açık':'🧭 Mihmandar: Kapalı';u.classList.toggle('active',on)}}
 const host=$e('xVig').parentElement;
-for(const [id,tx,f] of [['dlgBtn','💬 Diyaloglar',()=>{panel.style.display=panel.style.display==='block'?'none':'block'}],['tourBtn','🧭 Mihmandar turu',()=>tour.on?endTour():startTour(0)]]){const b=document.createElement('button');b.id=id;b.textContent=tx;b.onclick=f;host.appendChild(b)}
+for(const [id,tx,f] of [['dlgBtn','💬 Diyaloglar',()=>{panel.style.display=panel.style.display==='block'?'none':'block'}],['tourBtn','🧭 Mihmandar turu',()=>{tour.on?endTour():startTour(0);setPanelBtn()}]]){const b=document.createElement('button');b.id=id;b.textContent=tx;b.onclick=f;host.appendChild(b)}{const gb=$e('guideBtn');if(gb&&!$e('topTourBtn')){const tb=document.createElement('button');tb.id='topTourBtn';tb.title='Mihmandar turunu aç / kapat';tb.onclick=()=>{tour.on?endTour():startTour(0);setPanelBtn()};gb.after(tb);setPanelBtn()}}
 $e('dlgX').onclick=()=>panel.style.display='none';
 $e('pTour').onclick=()=>tour.on?endTour():startTour(0);$e('pNext').onclick=()=>{if(!tour.on)startTour(0);else{stopSay();tour.speaking=false;tourGo(tour.idx+1)}};$e('pHere').onclick=explainHere;$e('pCall').onclick=summon;
 $e('pSnd').onchange=e=>toggleSound(e.target.checked);
@@ -1451,7 +1491,7 @@ function renderLoop(){requestAnimationFrame(renderLoop);let dt=Math.min(clock.ge
  lookAt=new T.Vector3(pos.x,groundY+(inHall?1.0:1.25)+pitch*(inHall?2.2:5.5),pos.z);camera.fov=inHall?74:69;}
  else{targetPos=new T.Vector3(pos.x-Math.sin(yaw)*(22+7*zoom),groundY+14.2+14*zoom+Math.max(0,pitch)*7,pos.z-Math.cos(yaw)*(22+7*zoom));lookAt=new T.Vector3(pos.x,groundY+3.4+pitch*15,pos.z);camera.fov=65;}
  smoothCam.lerp(targetPos,Math.min(1,dt*10));camera.position.copy(smoothCam);if(lookAt){smoothTarget.lerp(lookAt,Math.min(1,dt*9));camera.lookAt(smoothTarget)}camera.updateProjectionMatrix();
- for(let i=0;i<fp.count;i++){let j=i*3;let x=flagOrig[j];fp.array[j+2]=Math.sin(elapsed*3.1+x*.69)*(.12+Math.max(0,x+5.5)*.035);fp.array[j+1]=flagOrig[j+1]+Math.sin(elapsed*2.7+x*.5)*.055}fp.needsUpdate=true;flagGeometry.computeVertexNormals();
+ for(let i=0;i<fp.count;i++){let j=i*3;let x=flagOrig[j];fp.array[j+2]=Math.sin(elapsed*3.1+x*.69)*(.12+Math.max(0,x+6)*.035);fp.array[j+1]=flagOrig[j+1]+Math.sin(elapsed*2.7+x*.5)*.055}fp.needsUpdate=true;flagGeometry.computeVertexNormals();
  (window.__trees||[]).forEach(t=>{t.g.rotation.z=Math.sin(elapsed*.9+t.p)*.012;t.g.rotation.x=Math.cos(elapsed*.7+t.p*1.7)*.008});
   [crowdActors,guardActors,honorActors,escortActors.map(e=>e.actor)].forEach(L=>L.forEach(bendJoints));
   {const gp=hangingBanner.geometry.attributes.position,o=window.__hb||(window.__hb=Float32Array.from(gp.array));for(let j=0;j<gp.array.length;j+=3){const y=o[j+1],w=(12.5-y)/25;gp.array[j+2]=o[j+2]+Math.sin(elapsed*1.7+y*.4+o[j]*.3)*(.05+.3*w)*(.6+Math.abs(o[j])/11.5)}gp.needsUpdate=true;hangingBanner.geometry.computeVertexNormals()}
