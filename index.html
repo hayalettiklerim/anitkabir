@@ -1574,4 +1574,100 @@ sceneReady=true;$('loading').classList.add('hidden');setCameraMode('third');setM
  apply();
 })();
 </script>
+<style id="v6css">
+.win{background-image:linear-gradient(160deg,rgba(16,32,38,.55),rgba(30,40,40,.35))!important;border:1px solid rgba(231,201,158,.30)!important;box-shadow:0 18px 50px #0008,inset 0 1px 0 rgba(255,240,210,.2)!important;border-radius:18px!important}
+.winbar{background-image:linear-gradient(90deg,rgba(215,178,119,.28),rgba(255,255,255,.03));letter-spacing:.05em;font-family:Georgia,serif}
+#speakBtn,#nextBtn{background-image:linear-gradient(135deg,#e6c387,#b88d54)!important;color:#1b1d1a!important;border-color:#f3dcab!important;font-weight:800}
+#vig{position:fixed;inset:0;pointer-events:none;z-index:2;background:radial-gradient(ellipse at center,transparent 52%,rgba(6,12,18,.42) 100%)}
+#prog{margin:0 0 12px}#prog .dots{display:flex;gap:6px;margin-bottom:7px}
+#prog .dots i{flex:1;height:7px;border-radius:5px;background:rgba(255,255,255,.18);transition:.3s}
+#prog .dots i.on{background:#d9b26c}#prog .dots i.cur{background:#fff;box-shadow:0 0 9px #ffe2a8}
+#prog small{font-size:11px;color:#e1caa5;letter-spacing:.03em}
+#quizModal{position:fixed;inset:0;z-index:9000;background:rgba(5,12,18,.68);display:none;place-items:center;padding:16px;backdrop-filter:blur(5px)}
+#quizModal.show{display:grid}
+#quizModal .qbox{width:min(460px,100%);padding:24px;border:1px solid rgba(231,201,158,.4);animation:qin .3s}
+#quizModal .qk{font-size:11px;letter-spacing:.3em;color:#e2bd80}
+#quizModal h3{font:normal 22px/1.3 Georgia,serif;margin:8px 0 16px;color:#fff6df}
+#qOpts button{display:block;width:100%;text-align:left;margin:8px 0;padding:13px 15px;font-size:15px}
+#qOpts button.ok{background:#2f7d4f!important;border-color:#8fe0ae}#qOpts button.no{background:#a23b35!important}#qOpts button.dim{opacity:.45}
+#qRes{min-height:24px;margin:10px 0;font-weight:700;color:#ffe9b8}
+#achv{position:fixed;top:70px;left:50%;transform:translate(-50%,-30px);z-index:8000;padding:11px 20px;border-radius:30px;background:linear-gradient(135deg,#e6c387,#b88d54);color:#1b1d1a;font-weight:800;opacity:0;pointer-events:none;transition:.45s;white-space:nowrap;max-width:92vw;overflow:hidden;text-overflow:ellipsis}
+#achv.show{opacity:1;transform:translate(-50%,0)}
+@keyframes qin{from{transform:translateY(20px) scale(.96);opacity:0}}
+#settings .tseg button{font-size:11px;padding:8px 2px}
+</style><div id="vig"></div><div id="achv"></div>
+<div id="quizModal"><div class="qbox glass"><div class="qk">KEŞİF SORUSU</div><h3 id="qText"></h3><div id="qOpts"></div><div id="qRes"></div><button id="qClose" style="width:100%">Kapat</button></div></div>
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const P={
+ sabah:{top:0x5e93c9,bot:0xf7d9b4,fog:0xe9d3bb,sun:0xffc88a,si:2.6,sp:[-120,55,95],hemi:1.8,ex:1.1,cl:0xffe6d0,night:0},
+ ogle:{top:0x3a82c8,bot:0xcfe6f2,fog:0xd6d9ca,sun:0xffebc9,si:3.3,sp:[-85,125,80],hemi:2.25,ex:1.15,cl:0xffffff,night:0},
+ aksam:{top:0x2f4a86,bot:0xff9a5a,fog:0xe3a47c,sun:0xff8c4f,si:2.5,sp:[125,38,-70],hemi:1.5,ex:1.1,cl:0xffc79a,night:0},
+ gece:{top:0x040a1a,bot:0x1d2c4d,fog:0x111b30,sun:0x91a9ff,si:.55,sp:[-60,100,40],hemi:.5,ex:.95,cl:0x4a5a80,night:1}};
+let tKey='ogle';try{tKey=localStorage.getItem('anit_time_v6')||'ogle'}catch(e){}
+if(!P[tKey])tKey='ogle';
+let setTime=()=>{};
+/* Gün saati düğmeleri */
+const cm=$('cameraMode'),box=document.createElement('div');
+box.innerHTML='<label>Gün saati (3B)</label><div class="seg tseg"><button data-t="sabah">🌅 Sabah</button><button data-t="ogle">☀ Öğle</button><button data-t="aksam">🌇 Akşam</button><button data-t="gece">🌙 Gece</button></div>';
+cm.parentNode.insertBefore(box,cm.nextSibling);
+const tb=[...box.querySelectorAll('button')];
+const mark=()=>tb.forEach(b=>b.classList.toggle('active',b.dataset.t===tKey));
+tb.forEach(b=>b.onclick=()=>{tKey=b.dataset.t;try{localStorage.setItem('anit_time_v6',tKey)}catch(e){}mark();setTime()});mark();
+/* 3B gökyüzü, ışık, bulut */
+function init3d(){
+ const T=THREE;let sun,hemi;
+ scene.traverse(o=>{if(o.isDirectionalLight&&o.castShadow)sun=o;if(o.isHemisphereLight)hemi=o});
+ const mat=new T.ShaderMaterial({side:T.BackSide,depthWrite:false,fog:false,
+  uniforms:{top:{value:new T.Color()},bot:{value:new T.Color()},sd:{value:new T.Vector3(0,1,0)},night:{value:0}},
+  vertexShader:'varying vec3 v;void main(){v=normalize(position);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
+  fragmentShader:'uniform vec3 top,bot,sd;uniform float night;varying vec3 v;float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}void main(){float y=max(v.y,0.);vec3 c=mix(bot,top,pow(y,.55));float g=max(dot(normalize(v),sd),0.);c+=vec3(1.,.75,.45)*(pow(g,48.)*.9+pow(g,6.)*.18)*(1.-night*.7);vec2 q=floor(v.xz/(v.y+1.2)*140.);c+=vec3(step(.9975,h(q))*night*smoothstep(.1,.4,v.y));gl_FragColor=vec4(c,1.);\n#include <tonemapping_fragment>\n#include <colorspace_fragment>\n}'});
+ const sky=new T.Mesh(new T.SphereGeometry(700,32,16),mat);sky.renderOrder=-10;sky.frustumCulled=false;scene.add(sky);
+ const cv=document.createElement('canvas');cv.width=cv.height=128;const g=cv.getContext('2d');
+ [[64,70,46],[40,76,32],[88,76,34],[60,52,30]].forEach(([x,y,r])=>{const q=g.createRadialGradient(x,y,0,x,y,r);q.addColorStop(0,'rgba(255,255,255,.95)');q.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=q;g.fillRect(0,0,128,128)});
+ const ctx=new T.CanvasTexture(cv);ctx.colorSpace=T.SRGBColorSpace;
+ const clouds=[];for(let i=0;i<9;i++){const m=new T.SpriteMaterial({map:ctx,transparent:true,opacity:.6,depthWrite:false,fog:false});const sp=new T.Sprite(m);const s=70+Math.random()*70;sp.scale.set(s*1.8,s*.7,1);sp.position.set(-350+Math.random()*700,85+Math.random()*60,-350+Math.random()*700);sp.userData.v=1.5+Math.random()*2.5;scene.add(sp);clouds.push(sp)}
+ const cur={top:new T.Color(),bot:new T.Color(),fog:new T.Color(),sun:new T.Color(),cl:new T.Color(),si:3,hemi:2,ex:1.1,night:0,sp:new T.Vector3(-85,125,80)};
+ const tg={top:new T.Color(),bot:new T.Color(),fog:new T.Color(),sun:new T.Color(),cl:new T.Color(),sp:new T.Vector3()};
+ let settle=1,first=true;
+ setTime=()=>{settle=170};
+ let last=performance.now();
+ function step(){requestAnimationFrame(step);const now=performance.now(),dt=Math.min(.1,(now-last)/1000);last=now;
+  sky.position.copy(camera.position);
+  clouds.forEach(c=>{c.position.x+=c.userData.v*dt;if(c.position.x>360)c.position.x=-360});
+  if(settle>0){const p=P[tKey],k=first?1:.05;first=false;settle--;
+   tg.top.set(p.top);tg.bot.set(p.bot);tg.fog.set(p.fog);tg.sun.set(p.sun);tg.cl.set(p.cl);tg.sp.set(...p.sp);
+   cur.top.lerp(tg.top,k);cur.bot.lerp(tg.bot,k);cur.fog.lerp(tg.fog,k);cur.sun.lerp(tg.sun,k);cur.cl.lerp(tg.cl,k);cur.sp.lerp(tg.sp,k);
+   cur.si+=(p.si-cur.si)*k;cur.hemi+=(p.hemi-cur.hemi)*k;cur.ex+=(p.ex-cur.ex)*k;cur.night+=(p.night-cur.night)*k;
+   mat.uniforms.top.value.copy(cur.top);mat.uniforms.bot.value.copy(cur.bot);mat.uniforms.night.value=cur.night;mat.uniforms.sd.value.copy(cur.sp).normalize();
+   if(sun){sun.color.copy(cur.sun);sun.intensity=cur.si;sun.position.copy(cur.sp)}
+   if(hemi)hemi.intensity=cur.hemi;
+   renderer.toneMappingExposure=cur.ex;
+   if(scene.fog)scene.fog.color.copy(cur.fog);
+   if(scene.background&&scene.background.isColor)scene.background.copy(cur.fog);
+   clouds.forEach(c=>c.material.color.copy(cur.cl));
+  }}
+ step();
+}
+const wait=setInterval(()=>{try{if(typeof sceneReady!=='undefined'&&sceneReady&&scene&&camera&&renderer){clearInterval(wait);init3d()}}catch(e){}},400);
+/* İlerleme göstergesi */
+const info=$('info'),h3=$('poiTitle'),pr=document.createElement('div');pr.id='prog';pr.innerHTML='<div class="dots"></div><small></small>';
+h3.parentNode.insertBefore(pr,h3.nextSibling);
+const dots=pr.querySelector('.dots');stops.forEach(()=>dots.appendChild(document.createElement('i')));
+const ans=new Set();
+let prev=visited.size;
+function tick(){[...dots.children].forEach((d,i)=>{d.className=(visited.has(i)?'on ':'')+(i===selected?'cur':'')});
+ pr.querySelector('small').textContent=visited.size+' / '+stops.length+' durak keşfedildi • ★ '+ans.size+' doğru cevap';
+ if(visited.size>prev){prev=visited.size;const a=$('achv');a.textContent='⭐ Yeni durak keşfedildi: '+stops[selected].short;a.classList.add('show');setTimeout(()=>a.classList.remove('show'),2800)}}
+setInterval(tick,250);tick();
+/* Soru kartı (prompt yerine) */
+function openQuiz(){const s=stops[selected],o=$('qOpts');$('qText').textContent=s.q;o.innerHTML='';$('qRes').textContent='';let done=false;
+ s.a.forEach((a,i)=>{const b=document.createElement('button');b.textContent=a;b.onclick=()=>{if(done)return;done=true;
+  [...o.children].forEach((x,j)=>x.classList.add(j===s.correct?'ok':(j===i?'no':'dim')));
+  if(i===s.correct){ans.add(selected);$('qRes').textContent='✅ Doğru cevap! Harikasın.'}else $('qRes').textContent='ℹ️ Doğru cevap: '+s.a[s.correct];tick()};o.appendChild(b)});
+ $('quizModal').classList.add('show')}
+$('quizBtn').onclick=openQuiz;$('qClose').onclick=()=>$('quizModal').classList.remove('show');
+})();
+</script>
 </body></html>
