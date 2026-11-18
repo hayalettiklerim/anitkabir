@@ -234,9 +234,9 @@ function render(){
  document.getElementById('anthemEnable').onclick=()=>call3('enableAnthem');
  document.getElementById('anthemTry').onclick=()=>call3('previewAnthem');
  document.getElementById('resetCeremony').onclick=()=>{window.__ceremonyController.reset();window.__anit3d?.resetCeremonyFlow?.();message('Tören sıfırlandı. Başlat düğmesiyle yeniden açabilirsin.')};}
- if(current==='people'){base('👥 Karakterler ve kalabalık',`<p>Kendi kız veya erkek çocuk karakterini seç. Asker ve ziyaretçi sayısını sahnedeki performansa göre ayarla. Tören günlerinde ek kalabalık otomatik olarak çoğalır.</p><label>Karakterim</label><select id="genderChoice"><option value="girl" ${state.gender==='girl'?'selected':''}>👧 Kız</option><option value="boy" ${state.gender==='boy'?'selected':''}>👦 Erkek</option></select><label>Ortamdaki ziyaretçiler: <output id="peopleVal">${state.people}</output></label><input id="peopleCount" type="range" min="0" max="420" step="10" value="${state.people}"><label>Askerler: <output id="soldierVal">${state.soldiers}</output></label><input id="soldierCount" type="range" min="0" max="60" step="2" value="${state.soldiers}"><button id="peopleApply">✅ Uygula</button><p class="expNotice">Çok sayıda kişi eski cihazlarda yavaşlamaya neden olabilir. Kalabalıklar görsel canlandırmadır.</p>`);
+ if(current==='people'){base('👥 Karakterler ve kalabalık',`<p>Kendi kız veya erkek çocuk karakterini seç. Asker ve ziyaretçi sayısını sahnedeki performansa göre ayarla. Tören günlerinde ek kalabalık otomatik olarak çoğalır.</p><label>Karakterim</label><select id="genderChoice"><option value="girl" ${state.gender==='girl'?'selected':''}>👧 Kız</option><option value="boy" ${state.gender==='boy'?'selected':''}>👦 Erkek</option></select><label>Mihmandar (görünüm ve ses)</label><select id="mihChoice"><option value="m" ${safeRead('anit_mih_v1','m')==='m'?'selected':''}>🧔 Erkek mihmandar</option><option value="f" ${safeRead('anit_mih_v1','m')==='f'?'selected':''}>👩 Kadın mihmandar</option></select><label>Ortamdaki ziyaretçiler: <output id="peopleVal">${state.people}</output></label><input id="peopleCount" type="range" min="0" max="420" step="10" value="${state.people}"><label>Askerler: <output id="soldierVal">${state.soldiers}</output></label><input id="soldierCount" type="range" min="0" max="60" step="2" value="${state.soldiers}"><button id="peopleApply">✅ Uygula</button><p class="expNotice">Çok sayıda kişi eski cihazlarda yavaşlamaya neden olabilir. Kalabalıklar görsel canlandırmadır.</p>`);
  document.getElementById('peopleCount').oninput=e=>document.getElementById('peopleVal').textContent=e.target.value;document.getElementById('soldierCount').oninput=e=>document.getElementById('soldierVal').textContent=e.target.value;
- document.getElementById('peopleApply').onclick=()=>{state.gender=document.getElementById('genderChoice').value;state.people=Number(document.getElementById('peopleCount').value);state.soldiers=Number(document.getElementById('soldierCount').value);safeSave('anit_gender_v3',state.gender);safeSave('anit_people_v3',state.people);safeSave('anit_soldiers_v3',state.soldiers);call3('updatePeople',{...state});message('Karakter ve kalabalık ayarları uygulandı.')};}
+ document.getElementById('peopleApply').onclick=()=>{{const mv=document.getElementById('mihChoice').value;safeSave('anit_mih_v1',mv);window.__setMihGender&&window.__setMihGender(mv)}state.gender=document.getElementById('genderChoice').value;state.people=Number(document.getElementById('peopleCount').value);state.soldiers=Number(document.getElementById('soldierCount').value);safeSave('anit_gender_v3',state.gender);safeSave('anit_people_v3',state.people);safeSave('anit_soldiers_v3',state.soldiers);call3('updatePeople',{...state});message('Karakter ve kalabalık ayarları uygulandı.')};}
  if(current==='photo'){const a=safeRead('anit_album_v3',[]);base('📷 Hatıra fotoğrafları ve albüm',`<p>Sahnedeki görüntüyü kaydet. Askerlerin yanına gidip hatıra fotoğrafı çekebilirsin.</p><button id="takePhoto">📸 Fotoğraf çek</button><button id="photoSpot">🪖 Askerlerin yanına git</button><button id="clearAlbum">🗑 Albümü temizle</button><div id="albumGrid">${a.map((im,i)=>`<div><img src="${im.data}" alt="Anıtkabir hatıra fotoğrafı"><small>${esc(im.date)}</small><button data-savephoto="${i}">⬇ İndir</button></div>`).join('')}</div>${!a.length?'<p>Albüm henüz boş.</p>':''}<p class="expNotice">Fotoğraflar bu tarayıcıda saklanır ve başka cihazlarla eşitlenmez. Albüm depolama sınırından dolayı son 8 görüntüyü tutar.</p>`);
  document.getElementById('takePhoto').onclick=takePhoto;document.getElementById('photoSpot').onclick=()=>{setMode('3d');call3('photoSpot');close()};document.getElementById('clearAlbum').onclick=()=>{if(confirm('Albümdeki fotoğraflar silinsin mi?')){safeSave('anit_album_v3',[]);render()}};
  document.querySelectorAll('[data-savephoto]').forEach(b=>b.onclick=()=>{const img=safeRead('anit_album_v3',[])[Number(b.dataset.savephoto)];if(img){const a=document.createElement('a');a.href=img.data;a.download='anitkabir-hatira-'+Date.now()+'.jpg';a.click()}});}
@@ -941,9 +941,12 @@ function build(kind,d){const root=new T.Group();grp.add(root);const y=terrainHei
  return e}
 function rebuildAll(){destroyAll();cur=null;DATA.npc.forEach(d=>build('npc',d));DATA.guide.forEach(d=>build('guide',d))}
 // ---- mihmandar
-const M=human(grp,3,150,{index:6,height:2.7});const blazer=new T.MeshStandardMaterial({color:0x1c3550,roughness:.85});
-M.g.traverse(o=>{if(o.isMesh&&o.material===guestClothes[6%guestClothes.length])o.material=blazer});
-{const sc=new T.Mesh(new T.TorusGeometry(.17,.05,6,12),new T.MeshStandardMaterial({color:0xc8102e}));sc.rotation.x=Math.PI/2;sc.position.y=2.02;M.g.add(sc);const tg=tag('Mihmandar','#9ad0ff');tg.position.y=3.35;M.g.add(tg)}
+let mihG='m';try{const v=JSON.parse(localStorage.getItem('anit_mih_v1')||'"m"');if(v==='f'||v==='m')mihG=v}catch(e){}
+const blazer=new T.MeshStandardMaterial({color:0x1c3550,roughness:.85});
+function buildMih(gd,at){const idx=gd==='f'?5:6,X=human(grp,at?at.x:3,at?at.z:150,{index:idx,height:2.7});X.g.traverse(o=>{if(o.isMesh&&o.material===guestClothes[idx%guestClothes.length])o.material=blazer});
+const sc=new T.Mesh(new T.TorusGeometry(.17,.05,6,12),new T.MeshStandardMaterial({color:0xc8102e}));sc.rotation.x=Math.PI/2;sc.position.y=2.02;X.g.add(sc);const tg=tag('Mihmandar','#9ad0ff');tg.position.y=3.35;X.g.add(tg);return X}
+let M=buildMih(mihG);
+window.__setMihGender=gd=>{if(gd!=='f'&&gd!=='m')return;mihG=gd;const o=M,N=buildMih(gd,{x:o.g.position.x,z:o.g.position.z});N.g.position.y=o.g.position.y;N.g.rotation.y=o.g.rotation.y;grp.remove(o.g);M=N;try{message(gd==='f'?'Mihmandar artık kadın; kadın sesiyle konuşacak.':'Mihmandar artık erkek; erkek sesiyle konuşacak.')}catch(e){}};
 M.g.position.y=terrainHeight(3,150)+.025;
 const marker=ringMesh(5,0x3a9bff);marker.visible=false;scene.add(marker);
 const NODES={A:[0,165],B:[0,90],C:[0,-14],D:[0,-66],E:[0,-96],M1:[76,-14],M2:[76,-44]},EDG=[['A','B'],['B','C'],['C','D'],['D','E'],['C','M1'],['M1','M2']];
@@ -994,7 +997,7 @@ function tourTick(el,dt){const g=M.g,gx=g.position.x,gz=g.position.z,dp=Math.hyp
   else if(far){tour.hold=true;tour.speaking=false;stopSay();showBox('🧭 Mihmandar','Seni bekliyorum, bana yaklaş…',tourBtns())}
   if(!tour.hold){
    if(!tour.arrived){const w=tour.path[0];if(!w){tour.arrived=true;tour.li=0}else{const dx=w.x-gx,dz=w.z-gz,d=Math.hypot(dx,dz);if(d<.6)tour.path.shift();else{face(w.x,w.z,6);const sp=Math.min(d,6.2*dt);g.position.x+=dx/d*sp;g.position.z+=dz/d*sp;walking=true}}}
-   else if(!tour.speaking&&tour.li<s.lines.length){tour.speaking=true;const t=s.lines[tour.li].t;showBox('🧭 Mihmandar · '+s.ad+' ('+(tour.li+1)+'/'+s.lines.length+')',t,tour.single?[['⏹ Kapat',()=>endTour()]]:tourBtns());say(t,{lang:'tr-TR',g:'m',pitch:.9},()=>{tour.speaking=false;tour.li++})}
+   else if(!tour.speaking&&tour.li<s.lines.length){tour.speaking=true;const t=s.lines[tour.li].t;showBox('🧭 Mihmandar · '+s.ad+' ('+(tour.li+1)+'/'+s.lines.length+')',t,tour.single?[['⏹ Kapat',()=>endTour()]]:tourBtns());say(t,{lang:'tr-TR',g:mihG,pitch:mihG==='f'?1.05:.9},()=>{tour.speaking=false;tour.li++})}
    else if(!tour.speaking&&tour.li>=s.lines.length){tour.w+=dt;if(tour.w>1.8){tour.w=0;tour.single?endTour():tourGo(tour.idx+1)}}
    if(tour.arrived)face(pos.x,pos.z,3)}}
  g.position.y=terrainHeight(g.position.x,g.position.z)+.025;
@@ -1491,7 +1494,7 @@ function renderLoop(){requestAnimationFrame(renderLoop);let dt=Math.min(clock.ge
  lookAt=new T.Vector3(pos.x,groundY+(inHall?1.0:1.25)+pitch*(inHall?2.2:5.5),pos.z);camera.fov=inHall?74:69;}
  else{targetPos=new T.Vector3(pos.x-Math.sin(yaw)*(22+7*zoom),groundY+14.2+14*zoom+Math.max(0,pitch)*7,pos.z-Math.cos(yaw)*(22+7*zoom));lookAt=new T.Vector3(pos.x,groundY+3.4+pitch*15,pos.z);camera.fov=65;}
  smoothCam.lerp(targetPos,Math.min(1,dt*10));camera.position.copy(smoothCam);if(lookAt){smoothTarget.lerp(lookAt,Math.min(1,dt*9));camera.lookAt(smoothTarget)}camera.updateProjectionMatrix();
- for(let i=0;i<fp.count;i++){let j=i*3;let x=flagOrig[j];fp.array[j+2]=Math.sin(elapsed*3.1+x*.69)*(.12+Math.max(0,x+6)*.035);fp.array[j+1]=flagOrig[j+1]+Math.sin(elapsed*2.7+x*.5)*.055}fp.needsUpdate=true;flagGeometry.computeVertexNormals();
+ for(let i=0;i<fp.count;i++){let j=i*3;let x=flagOrig[j];fp.array[j+2]=Math.sin(elapsed*3.1+x*.69)*(.12+Math.max(0,x+6)*.035)*(1+2.2*(window.__wind||0));fp.array[j+1]=flagOrig[j+1]+Math.sin(elapsed*2.7+x*.5)*.055}fp.needsUpdate=true;flagGeometry.computeVertexNormals();
  (window.__trees||[]).forEach(t=>{t.g.rotation.z=Math.sin(elapsed*.9+t.p)*.012;t.g.rotation.x=Math.cos(elapsed*.7+t.p*1.7)*.008});
   [crowdActors,guardActors,honorActors,escortActors.map(e=>e.actor)].forEach(L=>L.forEach(bendJoints));
   {const gp=hangingBanner.geometry.attributes.position,o=window.__hb||(window.__hb=Float32Array.from(gp.array));for(let j=0;j<gp.array.length;j+=3){const y=o[j+1],w=(12.5-y)/25;gp.array[j+2]=o[j+2]+Math.sin(elapsed*1.7+y*.4+o[j]*.3)*(.05+.3*w)*(.6+Math.abs(o[j])/11.5)}gp.needsUpdate=true;hangingBanner.geometry.computeVertexNormals()}
@@ -1509,6 +1512,27 @@ function renderLoop(){requestAnimationFrame(renderLoop);let dt=Math.min(clock.ge
  } renderer.render(scene,camera)}
  if(performance.now()-lastDate>220){lastDate=performance.now();$('loc').textContent='📍 '+stops[selected].short;$('cinemaPlace').textContent=stops[selected].short.toLocaleUpperCase('tr-TR');$('cinemaCount').textContent=String(selected+1).padStart(2,'0')+' / '+String(stops.length).padStart(2,'0');drawMap(true);if(mode==='2d')drawMap()}
 }
+
+// ---- ani hava bozulması: yağmur, rüzgâr, uçuşan yapraklar, insanlarda telaş
+{const ST={on:false,t:0,dur:26,next:70+Math.random()*60,enabled:true,k:0,prev:null,sun0:3.3,fog0:.0025,bg0:null,flash:0};
+try{ST.enabled=localStorage.getItem('anit_storm')!=='off'}catch(e){}
+const grey=new T.Color(0x56606b),leafG=new T.Group();leafG.visible=false;scene.add(leafG);
+const lm=[0x7a8f3a,0xa6742a,0x5f7a34,0xb88a3c].map(c=>new T.MeshBasicMaterial({color:c,side:T.DoubleSide})),lg=new T.PlaneGeometry(.22,.14),leaves=[];
+for(let i=0;i<90;i++){const m=new T.Mesh(lg,lm[i%4]);leafG.add(m);leaves.push({m,ox:(Math.random()-.5)*60,oy:.5+Math.random()*9,oz:(Math.random()-.5)*60,sp:.6+Math.random(),ph:Math.random()*6.28})}
+function startStorm(){if(ST.on)return;ST.on=true;ST.t=0;ST.prev={m:weatherMode,a:weatherAmount};ST.sun0=sun.intensity;ST.fog0=scene.fog?scene.fog.density:.0025;ST.bg0=scene.background&&scene.background.clone?scene.background.clone():null;
+ try{setWeather('rain',100)}catch(e){}leafG.visible=true;try{message('⛈ Hava aniden bozdu! Rüzgâr çıktı, herkes telaşlandı.')}catch(e){}}
+function endStorm(){ST.on=false;ST.k=0;window.__wind=0;leafG.visible=false;try{setWeather(ST.prev.m,ST.prev.a)}catch(e){}try{sun.intensity=ST.sun0;if(scene.fog)scene.fog.density=ST.fog0;if(ST.bg0)scene.background.copy(ST.bg0)}catch(e){}
+ try{if(AU&&AU.windG&&AU.ctx)AU.windG.gain.value=.05}catch(e){}try{crowdActors.forEach(a=>{if(a._p0!=null)a.pace=a._p0})}catch(e){}try{message('☀ Fırtına dindi, insanlar sakinleşti.')}catch(e){}ST.next=90+Math.random()*120}
+function stormTick(el,dt){if(!ST.on){ST.next-=dt;if(ST.next<=0){const quiet=mode==='3d'&&ST.enabled&&weatherMode!=='rain'&&!(window.__ceremonyController&&window.__ceremonyController.isActive&&window.__ceremonyController.isActive());if(quiet)startStorm();else ST.next=20}return}
+ ST.t+=dt;const k=Math.max(0,Math.min(1,ST.t/4,(ST.dur-ST.t)/5));ST.k=k;window.__wind=k;if(ST.t>=ST.dur||!ST.enabled){endStorm();return}
+ if(scene.fog)scene.fog.density=ST.fog0+(.0075-ST.fog0)*k;if(ST.bg0){scene.background.copy(ST.bg0).lerp(grey,k*.7)}
+ if(k>.5&&Math.random()<dt*.22)ST.flash=.14;ST.flash=Math.max(0,ST.flash-dt);sun.intensity=ST.sun0*(1-.55*k)+(ST.flash>0?3.5:0);
+ const w=(4+7*k);leaves.forEach(l=>{l.ox+=w*dt*l.sp;if(l.ox>30)l.ox-=60;l.m.position.set(pos.x+l.ox,l.oy+Math.sin(el*2+l.ph)*1.6,pos.z+l.oz+Math.sin(el*1.3+l.ph)*2);l.m.rotation.x+=dt*4*l.sp;l.m.rotation.y+=dt*3});
+ try{if(AU&&AU.windG&&AU.ctx)AU.windG.gain.value=.05+.3*k}catch(e){}
+ try{crowdActors.forEach(a=>{if(a._p0==null)a._p0=a.pace;a.pace=a._p0*(1+1.5*k)})}catch(e){}}
+const prevStormTick=window.__tick;window.__tick=(el,dt)=>{prevStormTick&&prevStormTick(el,dt);try{stormTick(el,dt)}catch(e){}};
+window.__stormNow=startStorm;window.__stormSet=v=>{ST.enabled=!!v;try{localStorage.setItem('anit_storm',v?'on':'off')}catch(e){}if(!v&&ST.on)endStorm();const sb=document.getElementById('stormBtn');if(sb)sb.textContent=ST.enabled?'⛈ Ani fırtına: açık':'⛈ Ani fırtına: kapalı'};
+const hostM=document.getElementById('xVig')&&document.getElementById('xVig').parentElement;if(hostM){const b=document.createElement('button');b.id='stormBtn';const sy=()=>b.textContent=ST.enabled?'⛈ Ani fırtına: açık':'⛈ Ani fırtına: kapalı';b.onclick=()=>{window.__stormSet(!ST.enabled)};sy();hostM.appendChild(b)}}
 sceneReady=true;$('loading').classList.add('hidden');setCameraMode('third');setMode('3d');renderLoop();
 } catch(e){console.error('3B yükleme hatası',e);$('loading').classList.add('hidden');$('fallback').style.display='grid';message('3B yüklenemedi. İnterneti kontrol ederek yeniden açabilir veya 2B haritayı kullanabilirsin.');}
 
@@ -1752,4 +1776,30 @@ function openQuiz(){const s=stops[selected],o=$('qOpts');$('qText').textContent=
 $('quizBtn').onclick=openQuiz;$('qClose').onclick=()=>$('quizModal').classList.remove('show');
 })();
 </script>
+<script>
+(function(){const $=id=>document.getElementById(id);
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function flagSVG(w){let pts='';for(let k=0;k<10;k++){const a=Math.PI+k*Math.PI/5,r=k%2?5:12.5;pts+=(83.5+Math.cos(a)*r).toFixed(1)+','+(50+Math.sin(a)*r).toFixed(1)+' '}
+return '<svg viewBox="0 0 150 100" width="'+w+'" xmlns="http://www.w3.org/2000/svg"><rect width="150" height="100" fill="#e31f26"/><circle cx="50" cy="50" r="25" fill="#fff"/><circle cx="56.25" cy="50" r="20" fill="#e31f26"/><polygon points="'+pts+'" fill="#fff"/></svg>'}
+/* açılış ekranında dalgalanan bayrak */
+const ins=document.querySelector('#help .inside');if(ins){const d=document.createElement('div');d.className='introFlag';d.innerHTML=flagSVG(120);ins.insertBefore(d,ins.firstChild)}
+/* sertifika */
+const bar=$('experienceBar');if(bar){const b=document.createElement('button');b.id='certBtn';b.textContent='🎓 Sertifika';bar.appendChild(b);
+b.onclick=()=>{let ov=$('certOv');if(ov){ov.remove();return}
+const n=(typeof visited!=='undefined'?visited.size:0),t=(typeof stops!=='undefined'?stops.length:8);let saved='';try{saved=localStorage.getItem('anit_cert_name')||''}catch(e){}
+ov=document.createElement('div');ov.id='certOv';ov.className='glass';ov.innerHTML='<h3>🎓 Gezi Sertifikası</h3><p>Keşfettiğin durak: <b>'+n+' / '+t+'</b>'+(n<t?' <small>(daha fazla durak gezersen belgen de zenginleşir)</small>':' 🎉')+'</p><label>Adın soyadın</label><input id="certName" type="text" maxlength="40" value="'+esc(saved)+'" placeholder="Adını yaz"><div class="expRow"><button id="certPrint">🖨 Yazdır / PDF kaydet</button><button id="certClose">Kapat</button></div>';document.body.appendChild(ov);
+$('certClose').onclick=()=>ov.remove();
+$('certPrint').onclick=()=>{const name=$('certName').value.trim();if(!name){$('certName').focus();return}try{localStorage.setItem('anit_cert_name',name)}catch(e){}
+const list=(typeof visited!=='undefined'?[...visited].sort((a,b)=>a-b).map(i=>stops[i].name):[]);
+const dt=new Date().toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'});
+const html='<!doctype html><meta charset="utf-8"><title>Anıtkabir Gezi Sertifikası</title><style>@page{size:A4 landscape;margin:0}body{margin:0;font-family:Georgia,serif;color:#1b2b38}.p{box-sizing:border-box;width:297mm;height:210mm;padding:12mm;background:#fffaf0}.f{height:100%;border:3mm double #b08d3c;padding:9mm 14mm;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:space-between}h1{margin:2mm 0;font-size:34pt;color:#8f1f1c;letter-spacing:.04em}h2{margin:0;font-size:15pt;font-weight:normal;color:#6a5a2c}.n{font-size:30pt;margin:3mm 0;border-bottom:.5mm solid #b08d3c;padding:0 14mm}p{margin:2mm 0;font-size:13pt;line-height:1.5}.s{font-size:11pt;color:#444}.b{display:flex;justify-content:space-between;width:100%;font-size:11pt}</style><div class="p"><div class="f"><div>'+flagSVG(90)+'</div><h2>T.C. · ANITKABİR SANAL GEZİSİ</h2><h1>BAŞARI BELGESİ</h1><div><p>Bu belge,</p><div class="n">'+esc(name)+'</div><p>adlı öğrencinin Anıtkabir sanal gezisini tamamlayarak<br><b>'+n+' / '+t+'</b> durağı keşfettiğini belgeler.</p><p class="s">'+esc(list.join(' • '))+'</p></div><div class="b"><span>Tarih: '+dt+'</span><span>Atatürk\'ün ilke ve inkılaplarıyla yürüyen bir gelecek dileğiyle 🇹🇷</span></div></div></div>';
+let fr=$('certFrame');if(fr)fr.remove();fr=document.createElement('iframe');fr.id='certFrame';fr.style.cssText='position:fixed;width:0;height:0;border:0;right:0;bottom:0';document.body.appendChild(fr);fr.srcdoc=html;fr.onload=()=>{try{fr.contentWindow.focus();fr.contentWindow.print()}catch(e){}}}}}
+})();
+</script>
+<style>
+.introFlag{display:flex;justify-content:center;margin-bottom:10px;perspective:400px}.introFlag svg{border-radius:4px;box-shadow:0 8px 24px rgba(0,0,0,.5);transform-origin:center;animation:flagwave 3.2s ease-in-out infinite}
+@keyframes flagwave{0%,100%{transform:rotateY(-14deg) skewY(-2deg)}50%{transform:rotateY(14deg) skewY(2deg)}}
+#certOv{position:fixed;z-index:10000;left:50%;top:50%;transform:translate(-50%,-50%);width:min(420px,92vw);padding:20px;text-align:left;background:rgba(12,34,51,.96)!important}
+#certOv h3{margin:0 0 8px;font-family:Georgia,serif;color:var(--gold2)}#certOv input{width:100%;padding:10px;font-size:16px;margin:6px 0 12px}#certOv small{opacity:.8}
+</style>
 </body></html>
