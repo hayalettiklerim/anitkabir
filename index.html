@@ -38,6 +38,67 @@ body.cinematic #experienceBar{opacity:.45;transition:opacity .2s}body.cinematic 
 #expPanel .expRecord button{margin-top:6px}
 #experienceBar{max-height:96px;overflow:auto;scrollbar-width:thin}
 @media(max-width:700px){#experienceBar{top:70px;max-height:70px;overflow-x:auto;flex-wrap:nowrap;justify-content:flex-start;max-width:98vw}#expPanel{top:145px;max-height:calc(100dvh - 160px)}}
+
+/* ===== v5: Ayarlar butonu + pencereli menü sistemi ===== */
+#settingsBtn.fab{position:fixed;top:14px;right:14px;z-index:9999;background:rgba(15,25,30,.18)!important;border:1px solid rgba(255,255,255,.30)!important;color:#fff!important;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);padding:10px 14px;font-size:13px;opacity:.72;border-radius:14px;box-shadow:none;transform:none}
+#settingsBtn.fab:hover,#settingsBtn.fab.active{opacity:1;background:rgba(15,25,30,.55)!important}
+.win{position:fixed;z-index:30;display:none;flex-direction:column;max-height:calc(100dvh - 16px);max-width:calc(100vw - 12px);overflow:hidden;padding:0}
+.win.show{display:flex}
+.winbar{display:flex;align-items:center;gap:5px;padding:4px 5px 4px 11px;cursor:move;touch-action:none;user-select:none;-webkit-user-select:none;background:rgba(255,255,255,.07);border-bottom:1px solid rgba(255,255,255,.14);font-size:12px;font-weight:700;color:#ead4a8}
+.winbar .wt{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.winbar button{padding:3px 9px;font-size:13px;line-height:1.2;border-radius:8px;transform:none;min-width:30px}
+.wbody{overflow:auto;min-height:0;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
+.win.wmin .wbody{display:none}.win.wmin .winbar{border-bottom:0}
+.win.wmin{width:auto!important;min-width:150px}
+.win.wmax{left:6px!important;top:56px!important;right:6px!important;bottom:auto!important;width:auto!important;max-height:calc(100dvh - 64px)}
+.in-win{position:static!important;transform:none!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;width:auto!important;max-width:none!important;max-height:none!important;background:none!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;pointer-events:auto!important;margin:0}
+#topbar.in-win{display:flex;flex-wrap:wrap;gap:6px;padding:8px}
+#topbar.in-win .spacer{display:none}
+#topbar.in-win #brand{font-size:15px;padding:9px 13px}
+#topbar.in-win>button{padding:10px 12px;font-size:12px}
+#settings.in-win{display:block!important;overflow:visible!important;padding:14px!important}
+#settings.in-win .handle{display:none}
+#experienceBar.in-win{display:flex;flex-wrap:wrap;justify-content:flex-start;overflow:visible;padding:8px;gap:6px}
+.dock.in-win{display:flex;overflow-x:auto;white-space:nowrap;padding:8px}
+#miniWrap.in-win{overflow:visible;padding:0}
+#miniWrap.in-win #miniHead{display:none}
+#w-mini{width:var(--mw,200px)}
+#w-mini #miniControls{flex-wrap:wrap}
+#w-mini #miniControls label{flex:1 1 100%}
+#w-mini #miniOpen{flex:1 1 100%}
+#w-mini #minimap{height:var(--mh,140px)}
+#w-mini.wmax #minimap{height:min(62dvh,560px)}
+#joystick.hide-js{display:none!important}
+.vis-box{margin:0 0 10px;padding:8px 10px;border:1px solid rgba(255,255,255,.18);border-radius:11px;background:rgba(255,255,255,.05)}
+.vis-box b{display:block;font-size:13px;color:#ead4a8;margin-bottom:2px}
+.vis-box small{display:block;font-size:11px;opacity:.75;line-height:1.4;margin-bottom:4px}
+body.cinematic .win:not(#w-settings):not(#w-exp){visibility:hidden}
+body.cinematic #w-exp{opacity:.45}
+body.cinematic #settingsBtn.fab{opacity:1}
+
+/* Varsayılan pencere konumları (bilgisayar) */
+#w-top{left:14px;top:14px}
+#w-info{left:14px;top:150px;width:344px}
+#w-exp{left:372px;top:150px;width:520px}
+#w-status{right:14px;top:66px;width:240px}
+#w-settings{right:14px;top:190px;width:330px}
+#w-mini{right:360px;bottom:14px}
+#w-dock{left:14px;bottom:14px}
+@media(max-width:760px){
+ #settingsBtn.fab{top:8px;right:8px;padding:9px 11px;font-size:12px}
+ #w-top{left:6px;top:6px;max-width:calc(100vw - 110px)}
+ #topbar.in-win #brand{font-size:12px;max-width:none}
+ #topbar.in-win>button{padding:8px 8px;font-size:11px}
+ #w-info{left:6px;top:130px;width:min(300px,calc(100vw - 12px))}
+ #w-exp{left:6px;top:100px;width:calc(100vw - 12px)}
+ #w-status{right:6px;top:56px;width:160px;display:none}
+ #w-status.show{display:flex}
+ #w-settings{left:6px;right:auto;top:56px;width:calc(100vw - 12px);max-height:46dvh}
+ #w-mini{right:6px;bottom:96px;--mw:150px}
+ #w-mini #minimap{height:var(--mh,108px)}
+ #w-dock{left:6px;bottom:6px;width:calc(100vw - 12px)}
+}
+
 </style></head><body>
 <canvas id="world"></canvas><canvas id="map"></canvas><div id="fallback"><div>3B sahne yüklenemedi. İnternet erişimi gerekiyorsa bağlantını kontrol et.<p>2B Harita düğmesi yine çalışır.</p><button id="fallbackMap">2B haritaya geç</button></div></div><div id="loading" class="glass">3B Anıtkabir sahnesi hazırlanıyor…</div>
 <div id="topbar"><div id="brand" class="glass">🇹🇷 ANITKABİR • YAŞAYAN GEZİ 16.0<small>Çocuklar için interaktif eğitim • Tören Başlatma Motoru Yenilendi</small></div><div class="spacer"></div><button id="modeBtn">🗺️ 2B Harita</button><button id="guideBtn">🎧 Rehber: Kapalı</button><button id="fullBtn">⛶ Tam Ekran</button><button id="albumBtn">📷 Albüm</button><button id="settingsBtn">⚙ Ayarlar ▾</button></div>
@@ -1369,4 +1430,148 @@ function renderLoop(){requestAnimationFrame(renderLoop);let dt=Math.min(clock.ge
 sceneReady=true;$('loading').classList.add('hidden');setCameraMode('third');setMode('3d');renderLoop();
 } catch(e){console.error('3B yükleme hatası',e);$('loading').classList.add('hidden');$('fallback').style.display='grid';message('3B yüklenemedi. İnterneti kontrol ederek yeniden açabilir veya 2B haritayı kullanabilirsin.');}
 
-</script></body></html>
+</script>
+<script>
+/* v5: Tüm menüler Ayarlar butonunun içinde; pencereler taşınabilir/küçültülebilir/büyütülebilir; tikle kalıcı görünürlük */
+(function(){
+ const $=id=>document.getElementById(id);
+ const KEY='anit_ui_v5';
+ const load=()=>{try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return {}}};
+ const save=()=>{try{localStorage.setItem(KEY,JSON.stringify({vis:st.vis,min:st.min,pos:st.pos}))}catch(e){}};
+ const saved=load();
+ const st={open:false,
+  vis:Object.assign({top:false,info:false,status:false,exp:false,mini:false,dock:false,joy:true},saved.vis||{}),
+  min:saved.min||{},pos:saved.pos||{}};
+
+ /* Ayarlar butonunu üst çubuktan çıkarıp bağımsız, yarı saydam buton yap */
+ const sb=$('settingsBtn');
+ document.body.appendChild(sb);
+ sb.classList.add('fab');
+ sb.textContent='⚙ Ayarlar';
+
+ const defs=[
+  {key:'top',id:'topbar',title:'🇹🇷 Üst menü'},
+  {key:'info',id:'info',title:'ℹ️ Durak bilgisi'},
+  {key:'status',id:'status',title:'📍 Durum'},
+  {key:'exp',id:'experienceBar',title:'🏛 Etkinlikler'},
+  {key:'mini',id:'miniWrap',title:'🗺 Küçük harita'},
+  {key:'dock',el:document.querySelector('.dock'),title:'🎥 Kamera kontrolleri'},
+  {key:'settings',id:'settings',title:'⚙ Gezi ayarları'}
+ ];
+ let zTop=30;
+ const wins={};
+ defs.forEach(d=>{
+  const el=d.el||$(d.id); if(!el)return;
+  const w=document.createElement('div');
+  w.className='win glass';w.id='w-'+d.key;
+  w.innerHTML='<div class="winbar"><span class="wt"></span><button class="wmin" title="Küçült / Aç">–</button><button class="wmax" title="Büyüt / Eski boyut">⤢</button></div><div class="wbody"></div>';
+  w.querySelector('.wt').textContent=d.title;
+  el.parentNode.insertBefore(w,el);
+  w.querySelector('.wbody').appendChild(el);
+  el.classList.add('in-win');
+  document.body.appendChild(w);
+  wins[d.key]=w;
+  w.addEventListener('pointerdown',()=>{w.style.zIndex=++zTop},true);
+  /* küçült */
+  w.querySelector('.wmin').onclick=()=>{
+   const m=!w.classList.contains('wmin');
+   w.classList.toggle('wmin',m);
+   if(m)w.classList.remove('wmax');
+   st.min[d.key]=m;save();syncMax(w);
+  };
+  /* büyüt */
+  w.querySelector('.wmax').onclick=()=>{
+   w.classList.remove('wmin');st.min[d.key]=false;
+   w.classList.toggle('wmax');syncMax(w);save();
+   setTimeout(()=>window.dispatchEvent(new Event('resize')),30);
+  };
+  if(st.min[d.key])w.classList.add('wmin');
+  /* kaydır (sürükle) */
+  const bar=w.querySelector('.winbar');let dr=null;
+  bar.addEventListener('pointerdown',e=>{
+   if(e.target.closest('button')||w.classList.contains('wmax'))return;
+   const r=w.getBoundingClientRect();
+   dr={x:e.clientX,y:e.clientY,l:r.left,t:r.top};
+   try{bar.setPointerCapture(e.pointerId)}catch(_){}
+  });
+  bar.addEventListener('pointermove',e=>{
+   if(!dr)return;
+   const r=w.getBoundingClientRect();
+   const x=Math.max(0,Math.min(innerWidth-Math.min(r.width,80),dr.l+e.clientX-dr.x));
+   const y=Math.max(0,Math.min(innerHeight-34,dr.t+e.clientY-dr.y));
+   Object.assign(w.style,{left:x+'px',top:y+'px',right:'auto',bottom:'auto'});
+  });
+  const end=()=>{
+   if(!dr)return;dr=null;
+   const r=w.getBoundingClientRect();
+   st.pos[d.key]={l:Math.round(r.left),t:Math.round(r.top)};save();
+  };
+  bar.addEventListener('pointerup',end);bar.addEventListener('pointercancel',end);
+  if(st.pos[d.key]&&!d.noPos){
+   const p=st.pos[d.key];
+   Object.assign(w.style,{left:Math.max(0,Math.min(innerWidth-80,p.l))+'px',top:Math.max(0,Math.min(innerHeight-40,p.t))+'px',right:'auto',bottom:'auto'});
+  }
+ });
+ function syncMax(w){w.querySelector('.wmax').textContent=w.classList.contains('wmax')?'⤡':'⤢'}
+
+ /* Ekranda görünsün: tik kutuları (Ayarlar penceresinin en üstüne) */
+ const rows=[
+  ['top','Üst menü (harita, rehber, tam ekran, albüm)'],
+  ['info','Durak bilgisi'],
+  ['status','Durum bilgisi'],
+  ['exp','Etkinlik menüsü (müze, çelenk, tören…)'],
+  ['mini','Küçük harita'],
+  ['dock','Kamera kontrolleri (yaklaş, uzaklaş, döndür)'],
+  ['joy','Yön tuşları (mobil)']
+ ];
+ const box=document.createElement('div');box.className='vis-box';
+ box.innerHTML='<b>👁 Ekranda görünsün</b><small>İşaretlediğin menüler Ayarlar kapalıyken de ekranda kalır. İşareti kaldırırsan Ayarlar kapanınca gizlenir.</small>';
+ rows.forEach(([k,t])=>{
+  const row=document.createElement('div');row.className='toggle';
+  const lb=document.createElement('label');lb.htmlFor='vis_'+k;lb.textContent=t;
+  const cb=document.createElement('input');cb.type='checkbox';cb.id='vis_'+k;cb.checked=!!st.vis[k];
+  cb.onchange=()=>{st.vis[k]=cb.checked;save();apply()};
+  row.appendChild(lb);row.appendChild(cb);box.appendChild(row);
+ });
+ const stg=$('settings');
+ stg.insertBefore(box,stg.querySelector('.handle').nextSibling);
+
+ /* Uygula: Ayarlar açıkken hepsi; kapalıyken sadece tikliler */
+ function apply(){
+  Object.keys(wins).forEach(k=>{
+   const show=st.open||(k!=='settings'&&!!st.vis[k]);
+   wins[k].classList.toggle('show',show);
+  });
+  $('joystick').classList.toggle('hide-js',!st.vis.joy);
+  sb.classList.toggle('active',st.open);
+  sb.setAttribute('aria-expanded',st.open?'true':'false');
+  setTimeout(()=>{try{window.dispatchEvent(new Event('resize'))}catch(e){}},30);
+ }
+ sb.onclick=()=>{st.open=!st.open;apply()};
+ const cs=$('closeSettings');if(cs)cs.onclick=()=>{st.open=false;apply()};
+
+ /* Küçük harita kontrolleri (boyut / saydamlık / 2B aç) */
+ const ms=$('miniSize'),ma=$('miniAlpha'),mo=$('miniOpen');
+ if(ms)ms.oninput=()=>{const v=+ms.value;$('w-mini').style.setProperty('--mw',v+'px');$('w-mini').style.setProperty('--mh',Math.round(v*.74)+'px')};
+ if(ma)ma.oninput=()=>{$('minimap').style.opacity=ma.value/100};
+ if(mo)mo.onclick=()=>{$('minimap').click()};
+
+ /* Ekran döndürülünce pencereler dışarıda kalmasın */
+ window.addEventListener('resize',()=>{
+  Object.values(wins).forEach(w=>{
+   if(!w.style.left||w.classList.contains('wmax'))return;
+   const r=w.getBoundingClientRect();
+   const x=Math.max(0,Math.min(innerWidth-Math.min(r.width,80),r.left));
+   const y=Math.max(0,Math.min(innerHeight-34,r.top));
+   w.style.left=x+'px';w.style.top=y+'px';
+  });
+ });
+
+ /* Hoş geldin ekranına kısa ipucu */
+ const sBtn=$('startBtn');
+ if(sBtn){const p=document.createElement('p');p.innerHTML='⚙ <b>Ayarlar</b> düğmesi tüm menüleri açar/kapatır. Ayarlar içinden hangi menülerin ekranda kalacağını tikleyerek seçebilirsin.';sBtn.parentNode.insertBefore(p,sBtn)}
+
+ apply();
+})();
+</script>
+</body></html>
